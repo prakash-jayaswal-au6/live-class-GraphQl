@@ -1,0 +1,8 @@
+mutation{
+  saveUser(name:"prakash",password:"prakash",email:"prakash1@gmail.com",role:"author"){
+    id
+    name
+    email
+    role
+  }
+}

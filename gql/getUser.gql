@@ -1,0 +1,8 @@
+query{
+  user(id:"5fca517b3da7cc32040b13ac"){
+    id 
+    name
+    email
+    role
+  }
+}
