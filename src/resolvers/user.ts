@@ -94,7 +94,8 @@ const resolvers: IResolvers = {
         info
       ): Promise<UserDocument | null> => {
         try {
-          const result = await User.findByIdAndUpdate( args.userId, {$set:{onlineClasses: args.classId} },
+          //@ts-ignore
+          const result = await User.findByIdAndUpdate( args.userId, {$addToSet:{onlineClasses: args.classId} },
             (err, docs) => {
               if (err) {
                 console.log(err)
