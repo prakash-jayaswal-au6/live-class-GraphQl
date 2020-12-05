@@ -1,0 +1,15 @@
+mutation{
+  saveOnlineClass(
+    courseName:"web developer",
+    scheduleDateTime:"2020-12-12T06:03:10.597Z",
+    pricePerHour:22
+  	postedBy:"5fca50ac54d97e30686b7c6e"
+  ){
+    id
+    courseName
+    scheduleDateTime
+    pricePerHour
+    users
+    postedBy
+  }
+}

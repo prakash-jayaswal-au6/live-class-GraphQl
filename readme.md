@@ -1,6 +1,6 @@
 # graphql
 
-GraphQL Grocery API & UI monorepo.
+GraphQL Grocery API .
 
 ## Setup
 

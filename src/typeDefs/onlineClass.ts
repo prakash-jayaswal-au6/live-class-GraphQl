@@ -1,0 +1,33 @@
+import { gql } from 'apollo-server-express'
+
+export default gql`
+  extend type Query {
+    onlineClasses: [OnlineClass!]!
+    onlineClass(id: String!): OnlineClass
+  }
+
+  extend type Mutation {
+    saveOnlineClass( 
+        id: String
+        courseName: String!
+        scheduleDateTime: String!
+        postedBy: ID!
+        pricePerHour: Int!
+        users: [ID]
+        ): OnlineClass @admin @demo
+      
+    deleteOnlineClass(id: ID!): Boolean @admin @demo
+    
+  }
+
+
+  type OnlineClass {
+    id: ID!
+    courseName: String!
+    scheduleDateTime: String!
+    postedBy: ID!
+    pricePerHour: Int!
+    users: [ID]
+  }
+
+`

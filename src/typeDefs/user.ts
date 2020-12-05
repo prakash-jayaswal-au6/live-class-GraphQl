@@ -13,8 +13,15 @@ export default gql`
         email: String!
         password: String!
         role: String
+        onlineClasses: [ID]
         ): User @admin @demo
       
+    addClassToUser(
+      userId:String!
+      classId:String!
+    ): User @admin @demo
+
+
     deleteUser(id: ID!): Boolean @admin @demo
     
   }
@@ -25,6 +32,7 @@ export default gql`
     name: String
     email: String
     role: String
+    onlineClasses:[ID]
     createdAt: String!
     updatedAt: String!
   }

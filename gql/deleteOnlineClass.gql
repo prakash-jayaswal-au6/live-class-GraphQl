@@ -1,0 +1,3 @@
+mutation{
+  deleteOnlineClass(id:"5fcb2577863d131664f741ca")
+}

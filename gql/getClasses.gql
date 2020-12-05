@@ -1,0 +1,10 @@
+query{
+  onlineClasses{
+     id
+    courseName
+    scheduleDateTime
+    pricePerHour
+    users
+    postedBy
+  }
+}

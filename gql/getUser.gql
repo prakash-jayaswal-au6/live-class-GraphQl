@@ -4,5 +4,6 @@ query{
     name
     email
     role
+    onlineClasses
   }
 }

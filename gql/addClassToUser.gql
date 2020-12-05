@@ -1,0 +1,9 @@
+mutation{
+  addClassToUser(userId:"5fca50ac54d97e30686b7c6e",
+    classId:"5fcb2413863d131664f741c9"){
+		id
+    name
+    onlineClasses
+    updatedAt
+ 	 }
+}

@@ -26,7 +26,11 @@ const userSchema = new Schema(
     role: {
         type: String,
         default: 'user'
-        }
+    },
+    onlineClasses: [{
+      type: ObjectId,
+      ref: 'OnlineClass'
+    }]
    },
   schemaOptions
 )

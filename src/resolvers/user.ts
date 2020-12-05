@@ -8,7 +8,7 @@ import {
     Response,
     UserDocument,
   } from '../types'
-  import { User } from '../models'
+  import { User, OnlineClass } from '../models'
   
 const resolvers: IResolvers = {
     Query: {
@@ -85,6 +85,40 @@ const resolvers: IResolvers = {
         }
       },
   
+
+
+      addClassToUser: async(
+        root,
+        args,
+        { req }: { req: Request },
+        info
+      ): Promise<UserDocument | null> => {
+        try {
+          const result = await User.findByIdAndUpdate( args.userId, {$set:{onlineClasses: args.classId} },
+            (err, docs) => {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log('After add class in user  : ', docs)
+              }
+            }
+          )
+
+          await OnlineClass.findByIdAndUpdate( args.classId, {$set:{users: args.userId} },
+            (err, docs) => {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log('After add user in class : ', docs)
+              }
+            }
+          )
+          return result
+          
+      } catch (err) {
+        throw err
+      } 
+      }
     },
   }
   
