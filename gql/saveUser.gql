@@ -2,13 +2,13 @@ mutation{
   saveUser(
     name:"prakash",
     phone:"9694039047",
-    role:"user"){
+    role:"author"){
     id
     name
     role
     phone
-    refersFrom
-    refersUsers
+    referedFrom
+    referedUsers
     referralCode
   }
 }
