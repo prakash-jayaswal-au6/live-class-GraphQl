@@ -8,7 +8,7 @@ import {
     Response,
     OnlineClassDocument,
   } from '../types'
-  import { OnlineClass } from '../models'
+  import { OnlineClass, User } from '../models'
   
 const resolvers: IResolvers = {
     Query: {
@@ -49,7 +49,7 @@ const resolvers: IResolvers = {
             const result = await OnlineClass.findByIdAndUpdate( args.id, { courseName: args.courseName, scheduleDateTime:args.scheduleDateTime, pricePerHour:args.pricePerHour },
               (err, docs) => {
                 if (err) { 
-                  throw new Error('Class cant update or create ')
+                  throw new Error('Class cant update ')
                 } else {
                   console.log('Updated Class : ', docs)
                 }
@@ -57,15 +57,24 @@ const resolvers: IResolvers = {
               )
             return result
           } else {
-            const onlineClass = new OnlineClass({
+            const userExist = await User.findById(args.postedBy)
+            if (userExist === null) {
+              throw new Error(' User not Exist ')
+            }
+            if (userExist.role == "author") {
+              const onlineClass = new OnlineClass({
                 courseName: args.courseName,
                 scheduleDateTime: args.scheduleDateTime,
                 pricePerHour: args.pricePerHour,
                 postedBy: args.postedBy
             })  
-            console.log(onlineClass)
+            // console.log(onlineClass)
             const result = await onlineClass.save()
             return result
+            } else {
+              throw new Error(' only author can create the class ')
+            }
+
             }  
         } catch (err) {
           throw err
