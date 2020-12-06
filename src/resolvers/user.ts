@@ -36,10 +36,10 @@ const resolvers: IResolvers = {
         info
       ): Promise<UserDocument | null> => {
         try {
-            const existingUser = await User.findOne({ email: args.email })
+            const existingUser = await User.findOne({ phone: args.phone })
           //If user exist already then we will update it
           if (existingUser) {
-            const result = await User.findByIdAndUpdate( args.id, { name: args.name, email:args.email, role:args.role, phone:args.phone },
+            const result = await User.findByIdAndUpdate( args.id, { name: args.name, role:args.role, phone:args.phone },
               (err, docs) => {
                 if (err) {
                   console.log(err)
@@ -54,8 +54,6 @@ const resolvers: IResolvers = {
             // console.log(code)
             const user = new User({
                 name: args.name,
-                email: args.email,
-                password: args.password,
                 role: args.role,
                 phone: args.phone,
                 referralCode: code
@@ -82,7 +80,6 @@ const resolvers: IResolvers = {
         }
       },
   
-
       addClassToUser: async(
         root,
         args,
@@ -110,7 +107,6 @@ const resolvers: IResolvers = {
             }
           )
           return result
-          
       } catch (err) {
         throw err
       } 
@@ -125,29 +121,33 @@ const resolvers: IResolvers = {
       try {
         //@ts-ignore
         //first find the refel code user
-        
         const userWhoRefered = await User.findOne({ referralCode: args.referralCode })
+        if (userWhoRefered == null ) {
+          throw new Error('code incorrect ')
+        }
         const code = nanoId(5) 
         //create  new user with phone number
         const user = new User({
                 phone: args.phone,
-                referralCode: code,
-                refersBy: userWhoRefered.id
+                referralCode: code
         })
+        console.log("userWhoRefered: ", userWhoRefered)
+        console.log(user)
         //Now save the user to db
         const createdUser = await user.save()
-        // console.log(createdUser)
+        console.log("createdUser: ",createdUser)
         //lets update the user whose refered
-        const result = await User.findByIdAndUpdate( {id:userWhoRefered.id}, {$addToSet:{refersTo: createdUser.id} },
-          (err, docs) => {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log('After referal  : ', docs)
-            }
-          }
-        )
-        console.log(result)
+        //@ts-ignore
+        // const result = await User.findByIdAndUpdate( userWhoRefered.id, {$addToSet:{refersTo: createdUser.id} },
+        //   (err, docs) => {
+        //     if (err) {
+        //       console.log(err)
+        //     } else {
+        //       console.log('After referal  : ', docs)
+        //     }
+        //   }
+        // )
+        // console.log(result)
         return createdUser
       } catch (err) {
         throw err

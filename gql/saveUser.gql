@@ -1,8 +1,14 @@
 mutation{
-  saveUser(name:"prakash",password:"prakash",email:"prakash1@gmail.com",role:"author"){
+  saveUser(
+    name:"prakash",
+    phone:"9694039047",
+    role:"user"){
     id
     name
-    email
     role
+    phone
+    refersFrom
+    refersUsers
+    referralCode
   }
 }

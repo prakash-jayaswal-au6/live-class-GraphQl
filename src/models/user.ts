@@ -13,33 +13,27 @@ const userSchema = new Schema(
     name:{
         type:String,
     },
-    email:{
-        type:String
-    },
     phone: {
       type: String
-    },
-    password:{
-        type:String
     },
     role: {
         type: String,
         default: 'user'
     },
-    onlineClasses: [{
-      type: ObjectId,
-      ref: 'OnlineClass'
-    }],
     referralCode: {
       type: String
     },
-    refersTo: [{
+    referedFrom: {
+      type: ObjectId,
+      ref: 'User'
+    },
+    referedUsers: [{
       type: ObjectId,
       ref: 'User'
     }],
-    refersBy: [{
+    onlineClasses: [{
       type: ObjectId,
-      ref: 'User'
+      ref: 'OnlineClass'
     }]
    },
   schemaOptions

@@ -10,11 +10,8 @@ export default gql`
     saveUser( 
         id: String
         name: String
-        email: String
         phone: String!
-        password: String
         role: String
-        onlineClasses: [ID]
         ): User @admin @demo
       
     addClassToUser(
@@ -35,13 +32,12 @@ export default gql`
   type User {
     id: ID!
     name: String
-    email: String
     role: String
     phone: String
     referralCode: String
+    referedFrom: ID
+    referedUsers:[ID]
     onlineClasses:[ID]
-    refersTo:[ID]
-    refersBy:[ID]
     createdAt: String!
     updatedAt: String!
   }
