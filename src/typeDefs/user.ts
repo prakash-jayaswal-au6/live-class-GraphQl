@@ -9,9 +9,10 @@ export default gql`
   extend type Mutation {
     saveUser( 
         id: String
-        name: String!
-        email: String!
-        password: String!
+        name: String
+        email: String
+        phone: String!
+        password: String
         role: String
         onlineClasses: [ID]
         ): User @admin @demo
@@ -21,6 +22,10 @@ export default gql`
       classId:String!
     ): User @admin @demo
 
+    referrelUser(
+      referralCode:String!
+      phone:String!
+    ): User @admin @demo
 
     deleteUser(id: ID!): Boolean @admin @demo
     
@@ -32,7 +37,11 @@ export default gql`
     name: String
     email: String
     role: String
+    phone: String
+    referralCode: String
     onlineClasses:[ID]
+    refersTo:[ID]
+    refersBy:[ID]
     createdAt: String!
     updatedAt: String!
   }

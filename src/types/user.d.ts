@@ -7,6 +7,8 @@ export interface UserDocument extends Document {
   email: string
   password: string
   role: string
+  phone: string
+  referralCode: string
   onlineClasses: OnlineClassDocument['_id']
 }
 

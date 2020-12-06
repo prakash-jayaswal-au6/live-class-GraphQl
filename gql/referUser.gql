@@ -1,0 +1,7 @@
+mutation{
+  referrelUser(referralCode:"PSrMK",phone:"8003429522"){
+    id
+    phone
+    referralCode
+  }
+}

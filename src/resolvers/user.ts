@@ -1,15 +1,8 @@
-import {
-    IResolvers,
-    UserInputError,
-    AuthenticationError,
-  } from 'apollo-server-express'
-  import {
-    Request,
-    Response,
-    UserDocument,
-  } from '../types'
-  import { User, OnlineClass } from '../models'
-  
+import { IResolvers, UserInputError, AuthenticationError } from 'apollo-server-express'
+import { Request, Response, UserDocument } from '../types'
+import { User, OnlineClass } from '../models'
+import nanoId from 'nano-id'
+
 const resolvers: IResolvers = {
     Query: {
  // To get all Users
@@ -46,7 +39,7 @@ const resolvers: IResolvers = {
             const existingUser = await User.findOne({ email: args.email })
           //If user exist already then we will update it
           if (existingUser) {
-            const result = await User.findByIdAndUpdate( args.id, { name: args.name, email:args.email, role:args.role },
+            const result = await User.findByIdAndUpdate( args.id, { name: args.name, email:args.email, role:args.role, phone:args.phone },
               (err, docs) => {
                 if (err) {
                   console.log(err)
@@ -57,11 +50,15 @@ const resolvers: IResolvers = {
               )
             return result
           } else {
+            const code = nanoId(5) 
+            // console.log(code)
             const user = new User({
                 name: args.name,
                 email: args.email,
                 password: args.password,
-                role: args.role
+                role: args.role,
+                phone: args.phone,
+                referralCode: code
             })
             const result = await user.save()
             return result
@@ -86,7 +83,6 @@ const resolvers: IResolvers = {
       },
   
 
-
       addClassToUser: async(
         root,
         args,
@@ -104,7 +100,6 @@ const resolvers: IResolvers = {
               }
             }
           )
-
           await OnlineClass.findByIdAndUpdate( args.classId, {$set:{users: args.userId} },
             (err, docs) => {
               if (err) {
@@ -119,8 +114,50 @@ const resolvers: IResolvers = {
       } catch (err) {
         throw err
       } 
+    },
+      
+    referrelUser: async (
+      root,
+      args,
+      { req }: { req: Request },   
+      info
+    ): Promise<UserDocument | null> => { 
+      try {
+        //@ts-ignore
+        //first find the refel code user
+        
+        const userWhoRefered = await User.findOne({ referralCode: args.referralCode })
+        const code = nanoId(5) 
+        //create  new user with phone number
+        const user = new User({
+                phone: args.phone,
+                referralCode: code,
+                refersBy: userWhoRefered.id
+        })
+        //Now save the user to db
+        const createdUser = await user.save()
+        // console.log(createdUser)
+        //lets update the user whose refered
+        const result = await User.findByIdAndUpdate( {id:userWhoRefered.id}, {$addToSet:{refersTo: createdUser.id} },
+          (err, docs) => {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log('After referal  : ', docs)
+            }
+          }
+        )
+        console.log(result)
+        return createdUser
+      } catch (err) {
+        throw err
       }
+    }
     },
   }
   
   export default resolvers
+
+
+
+
