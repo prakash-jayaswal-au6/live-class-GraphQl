@@ -165,12 +165,52 @@ const resolvers: IResolvers = {
       } catch (err) {
         throw err
       }
+    },
+
+    addChildToParent: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => { 
+      try {
+        console.log(args.parentId)
+        const parent = await User.findOne({ id: args.parentId })
+         console.log(parent)
+        if (parent) {
+          console.log(parent)
+          const child = await User.findOne({ id: args.childId })
+          console.log(child)
+          if (child) {
+            // @ts-ignore
+            //To send SMS use child.phone 
+            const otp =  Math.floor(Math.random() * 10)
+            const result = await User.findByIdAndUpdate( parent.id, {$addToSet:{myChild: child.id} },
+              (err, docs) => {
+                if (err) {
+                  console.log(err)
+                } else {
+                  console.log('After added parent : ', docs)
+                  return docs
+                }
+              }
+            )
+            return result
+          } else {
+            throw new Error('Child Does not Exist,Please provide valid childId ') 
+          }
+        } else {
+          throw new Error('Parent Does not Exist,Please provide valid parentId ')
+        }
+        return args
+      } catch(err) {
+        throw err
+      }
     }
     },
   }
   
   export default resolvers
-
 
 
 

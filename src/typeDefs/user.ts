@@ -12,17 +12,22 @@ export default gql`
         name: String
         phone: String!
         role: String
-        ): User @admin @demo
+      ): User @admin @demo
       
     addClassToUser(
-      userId:String!
-      classId:String!
-    ): User @admin @demo
+        userId:String!
+        classId:String!
+      ): User @admin @demo
+
+    addChildToParent(
+        parentId:String!
+        childId:String!
+      ): Parent @admin @demo
 
     referrelUser(
-      referralCode:String!
-      phone:String!
-    ): User @admin @demo
+        referralCode:String!
+        phone:String!
+      ): User @admin @demo
 
     deleteUser(id: ID!): Boolean @admin @demo
     
@@ -38,6 +43,19 @@ export default gql`
     referedFrom: ID
     referedUsers:[ID]
     onlineClasses:[ID]
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Parent {
+    id: ID!
+    name: String
+    role: String
+    phone: String
+    referralCode: String
+    referedFrom: ID
+    referedUsers:[ID]
+    myChild:[ID]
     createdAt: String!
     updatedAt: String!
   }

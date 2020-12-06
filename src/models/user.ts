@@ -34,6 +34,10 @@ const userSchema = new Schema(
     onlineClasses: [{
       type: ObjectId,
       ref: 'OnlineClass'
+    }],
+    myChild: [{
+      type: ObjectId,
+      ref: 'User'
     }]
    },
   schemaOptions

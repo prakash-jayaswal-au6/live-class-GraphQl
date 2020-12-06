@@ -1,8 +1,10 @@
+# Choose role = author ,parent By Default its user
+
 mutation{
   saveUser(
     name:"prakash",
     phone:"9694039047",
-    role:"author"){
+    role:"author"){    
     id
     name
     role
