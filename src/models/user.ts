@@ -38,7 +38,10 @@ const userSchema = new Schema(
     myChild: [{
       type: ObjectId,
       ref: 'User'
-    }]
+    }],
+    otp: {
+      type:String
+    }
    },
   schemaOptions
 )

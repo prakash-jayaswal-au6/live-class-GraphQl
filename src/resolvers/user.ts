@@ -167,7 +167,7 @@ const resolvers: IResolvers = {
       }
     },
 
-    addChildToParent: async (
+    requestToChild: async (
       root,
       args,
       { req }: { req: Request },
@@ -175,42 +175,55 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => { 
       try {
         console.log(args.parentId)
-        const parent = await User.findOne({ id: args.parentId })
-         console.log(parent)
-        if (parent) {
-          console.log(parent)
-          const child = await User.findOne({ id: args.childId })
-          console.log(child)
-          if (child) {
+        const parent = await User.findOne({ _id: args.parentId, role:"parent" })
+        if (parent=== null) 
+          throw new Error('Parent Does not Exist,Please provide valid parentId ')
+        // console.log(parent)
+        const child = await User.findOne({ _id: args.childId, role:"user" })
+         console.log("child: ",child)
+        if (child === null) 
+          throw new Error('Child Does not Exist,Please provide valid childId ') 
+          
             // @ts-ignore
             //To send SMS use child.phone 
-            const otp =  Math.floor(Math.random() * 10)
-            const result = await User.findByIdAndUpdate( parent.id, {$addToSet:{myChild: child.id} },
-              (err, docs) => {
-                if (err) {
-                  console.log(err)
-                } else {
-                  console.log('After added parent : ', docs)
-                  return docs
-                }
-              }
-            )
-            return result
-          } else {
-            throw new Error('Child Does not Exist,Please provide valid childId ') 
-          }
-        } else {
-          throw new Error('Parent Does not Exist,Please provide valid parentId ')
-        }
-        return args
+         const otp = Math.floor(Math.random() * 100000  )
+        // console.log("otpIs :", otp)
+        await User.findByIdAndUpdate( child.id, {$set:{otp: otp} })
+          throw "otp sent to the child"
       } catch(err) {
+        throw err
+      }
+    },
+
+    addChildToParent: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => { 
+      try{
+        const parent = await User.findOne({ _id: args.parentId, role:"parent" })
+        if (parent=== null) 
+          throw new Error('Parent Does not Exist,Please provide valid parentId ')
+        // console.log("parent",parent)
+        const child = await User.findOne({ _id: args.childId, role:"user" })
+        // console.log("child: ", child)
+        if (child === null) 
+          throw new Error('Child Does not Exist,Please provide valid childId ') 
+        console.log("child:", child)
+      // @ts-ignore
+        if (child.otp == args.otp) {
+          const result = await User.findByIdAndUpdate( parent.id, {$addToSet:{myChild: child.id} })
+          return result
+        } else {
+          throw new Error('Incorrect OTP') 
+        }
+      } catch (err) {
         throw err
       }
     }
     },
   }
   
-  export default resolvers
-
-
-
+export default resolvers
+  

@@ -4,6 +4,7 @@ query{
   name
   role
   phone
+  myChild
   onlineClasses
   referralCode
   referedFrom

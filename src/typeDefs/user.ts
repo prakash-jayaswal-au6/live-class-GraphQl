@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    users: [User!]!
-    user(id: String!): User
+    users: [Author!]!
+    user(id: String!): Author
   }
 
   extend type Mutation {
@@ -19,9 +19,15 @@ export default gql`
         classId:String!
       ): User @admin @demo
 
+    requestToChild(
+        parentId:String!
+        childId:String!
+      ): Parent @admin @demo
+
     addChildToParent(
         parentId:String!
         childId:String!
+        otp:String!
       ): Parent @admin @demo
 
     referrelUser(
@@ -43,6 +49,22 @@ export default gql`
     referedFrom: ID
     referedUsers:[ID]
     onlineClasses:[ID]
+    otp:String
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Author {
+    id: ID!
+    name: String
+    role: String
+    phone: String
+    referralCode: String
+    referedFrom: ID
+    referedUsers:[ID]
+    onlineClasses:[ID]
+    otp:String
+    myChild:[ID]
     createdAt: String!
     updatedAt: String!
   }
