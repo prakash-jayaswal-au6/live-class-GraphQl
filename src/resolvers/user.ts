@@ -186,8 +186,8 @@ const resolvers: IResolvers = {
             //To send SMS use child.phone 
          const otp = Math.floor(Math.random() * 100000  )
         // console.log("otpIs :", otp)
-        await User.findByIdAndUpdate( child.id, {$set:{otp: otp} })
-          throw "otp sent to the child"
+        await User.findByIdAndUpdate(child.id, { $set: { otp: otp } })
+                  
       } catch(err) {
         throw err
       }

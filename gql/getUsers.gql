@@ -5,6 +5,7 @@ query{
   role
   phone
   myChild
+  otp
   onlineClasses
   referralCode
   referedFrom
