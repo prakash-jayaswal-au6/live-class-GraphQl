@@ -137,7 +137,6 @@ const resolvers: IResolvers = {
         if (checkUser) {
           throw new Error('Phone Number already exist in database,please choose another phone Number. ')
         }
-
         //create  new user with phone number
         const code = nanoId(5) 
         const user = new User({
@@ -183,7 +182,6 @@ const resolvers: IResolvers = {
          console.log("child: ",child)
         if (child === null) 
           throw new Error('Child Does not Exist,Please provide valid childId ') 
-          
             // @ts-ignore
             //To send SMS use child.phone 
          const otp = Math.floor(Math.random() * 100000  )
