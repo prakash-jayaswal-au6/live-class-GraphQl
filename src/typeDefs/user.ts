@@ -37,6 +37,11 @@ export default gql`
 
     deleteUser(id: ID!): Boolean @admin @demo
     
+    removeChildFromParent(
+      parentId: ID!
+      childId: ID!
+      ): Author @admin @demo
+    
   }
 
 

@@ -6,6 +6,7 @@ import {
 import { Request, Response, UserDocument } from '../types'
 import { User, OnlineClass } from '../models'
 import nanoId from 'nano-id'
+import { any } from '@hapi/joi'
 
 const resolvers: IResolvers = {
   Query: {
@@ -189,10 +190,7 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       try {
         console.log(args.parentId)
-        const parent = await User.findOne({
-          _id: args.parentId,
-          role: 'parent',
-        })
+        const parent = await User.findOne({ _id: args.parentId, role: 'parent' || 'teacher' })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
@@ -218,12 +216,12 @@ const resolvers: IResolvers = {
       root,
       args,
       { req }: { req: Request },
-      info
+      info 
     ): Promise<UserDocument | null> => {
       try {
         const parent = await User.findOne({
           _id: args.parentId,
-          role: 'parent',
+          role: 'parent' || 'teacher' ,
         })
         if (parent === null)
           throw new Error(
@@ -254,6 +252,33 @@ const resolvers: IResolvers = {
         throw err
       }
     },
+
+    removeChildFromParent: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => { 
+      try {
+        const parent = await User.findOne({ _id: args.parentId, role: 'parent'})
+        if (parent === null)
+          throw new Error(
+            'Parent Does not Exist,Please provide valid parentId '
+          )
+        // console.log("parent",parent)
+        const child = await User.findOne({ _id: args.childId, role: 'user' })
+        // console.log("child: ", child)
+        if (child === null)
+          throw new Error('Child Does not Exist,Please provide valid childId ')
+        
+        await User.findByIdAndUpdate(parent.id, { $pull: {children: args.childId}})
+        await User.findByIdAndUpdate(child.id, { $pull: {parent: args.parentId}})
+
+        return parent
+      } catch (err) {
+        throw err
+      }
+    }
   },
 }
 
