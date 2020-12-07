@@ -64,7 +64,8 @@ export default gql`
     referedUsers:[ID]
     onlineClasses:[ID]
     otp:String
-    myChild:[ID]
+    children:[ID]
+    parent:[ID]
     createdAt: String!
     updatedAt: String!
   }
@@ -76,8 +77,9 @@ export default gql`
     phone: String
     referralCode: String
     referedFrom: ID
+    parent:[ID]
     referedUsers:[ID]
-    myChild:[ID]
+    children:[ID]
     createdAt: String!
     updatedAt: String!
   }

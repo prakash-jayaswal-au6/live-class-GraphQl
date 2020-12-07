@@ -4,7 +4,8 @@ query{
   name
   role
   phone
-  myChild
+  children
+  parent
   otp
   onlineClasses
   referralCode

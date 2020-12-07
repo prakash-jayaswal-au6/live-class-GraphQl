@@ -7,7 +7,7 @@ mutation {
     name
     role
     phone
-    myChild
+    children
     referralCode
     createdAt
     updatedAt

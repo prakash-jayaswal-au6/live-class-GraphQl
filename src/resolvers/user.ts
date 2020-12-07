@@ -186,8 +186,8 @@ const resolvers: IResolvers = {
             //To send SMS use child.phone 
          const otp = Math.floor(Math.random() * 100000  )
         // console.log("otpIs :", otp)
-        await User.findByIdAndUpdate(child.id, { $set: { otp: otp } })
-                  
+        const user = await User.findByIdAndUpdate(child.id, { $set: { otp: otp } })
+        return user
       } catch(err) {
         throw err
       }
@@ -211,7 +211,16 @@ const resolvers: IResolvers = {
         console.log("child:", child)
       // @ts-ignore
         if (child.otp == args.otp) {
-          const result = await User.findByIdAndUpdate( parent.id, {$addToSet:{myChild: child.id} })
+          const result = []
+          //updatig child in parent schema
+          const parentAfterUpdate = await User.findByIdAndUpdate(parent.id, { $addToSet: { children: child.id } })
+          result.push(parentAfterUpdate)
+          //updatig child in parent schema
+          const childAfterUpdate = await User.findByIdAndUpdate(child.id, { $addToSet: { parent: parent.id } })
+          result.push(childAfterUpdate)
+          //updating OTP as null
+          await User.findByIdAndUpdate(child.id, { $set: { otp: null } })
+          // @ts-ignore
           return result
         } else {
           throw new Error('Incorrect OTP') 
@@ -225,3 +234,6 @@ const resolvers: IResolvers = {
   
 export default resolvers
   
+
+
+
