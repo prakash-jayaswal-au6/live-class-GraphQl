@@ -6,6 +6,7 @@ export interface UserDocument extends Document {
   name: string
   role: string
   phone: string
+  balance: number
   referralCode: string
   referedFrom: UserDocument['_id']
   referedUsers:UserDocument['_id']

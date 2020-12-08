@@ -1,9 +1,13 @@
 import { Document } from 'mongoose'
-import { UserDocument } from './user';
+import { UserDocument } from './user'
+
 
 export interface WalletDocument extends Document {
-  amount: string
   remark: string
-  referedUser: string
+  direction: string
+  amount: number
   userId: UserDocument['_id']
+  referedUser: UserDocument['_id']
+  balance: number
 }
+

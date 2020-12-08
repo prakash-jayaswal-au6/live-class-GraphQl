@@ -1,10 +1,6 @@
-import {
-  IResolvers,
-  UserInputError,
-  AuthenticationError,
-} from 'apollo-server-express'
+import { IResolvers,UserInputError,AuthenticationError, } from 'apollo-server-express'
 import { Request, Response, UserDocument } from '../types'
-import { User, OnlineClass } from '../models'
+import { User, OnlineClass, Wallet } from '../models'
 import nanoId from 'nano-id'
 import { any } from '@hapi/joi'
 import { mkdir } from 'fs'
@@ -141,6 +137,8 @@ const resolvers: IResolvers = {
         if (user == null) throw new Error('User not exist !')
         const seat = onlineClass.seats
         if (seat > 1) {
+          
+
           //@ts-ignore
           await OnlineClass.findByIdAndUpdate(args.classId, { $addToSet: { users: args.userId }} )
           await OnlineClass.findByIdAndUpdate(args.classId, { $set: { seats: seat-1 }} )
@@ -195,26 +193,27 @@ const resolvers: IResolvers = {
         const user = new User({
           phone: args.phone,
           referralCode: code,
-          referedFrom: userWhoRefered.id,
+          referedFrom: userWhoRefered.id
         })
-
-        //Now save the user to db
+//Now save the user to db
         const newUser = await user.save()
-        console.log('newUser: ', newUser)
-        // lets update the user whose refered
-        const result = await User.findByIdAndUpdate(
-          userWhoRefered.id,
-          // @ts-ignore
-          { $addToSet: { referedUsers: newUser.id } },
-          (err, docs) => {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log('After referal  : ', docs)
-            }
-          }
-        )
-        console.log(result)
+        // console.log('newUser: ', newUser)
+// lets update the user whose refered
+        // @ts-ignore
+        await User.findByIdAndUpdate( userWhoRefered.id,{ $addToSet: { referedUsers: newUser.id } })
+        //create awallet
+           const wallet = new Wallet({
+            userId: userWhoRefered.id,
+            amount: 100,
+            operation: "+",
+            remark: "referrel bonus",
+            referedUser: newUser.id
+           })
+        const newWallet = await wallet.save()
+        
+        await User.findByIdAndUpdate(userWhoRefered.id, { $addToSet: { walletId: newWallet.id } })
+        // let balance = userWhoRefered.balance
+        await User.findByIdAndUpdate( userWhoRefered.id,{ $set: { balance: userWhoRefered.balance+newWallet.amount } })
         return newUser
       } catch (err) {
         throw err

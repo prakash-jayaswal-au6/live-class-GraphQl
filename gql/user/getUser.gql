@@ -4,6 +4,9 @@ query{
     name
     email
     role
+    phone
+    balance
+    walletId
     onlineClasses
   }
 }

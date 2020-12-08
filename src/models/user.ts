@@ -1,3 +1,4 @@
+import { number } from '@hapi/joi'
 import mongoose, { Schema } from 'mongoose'
 import { UserDocument } from '../types'
 
@@ -43,9 +44,13 @@ const userSchema = new Schema(
       type: ObjectId,
       ref: 'User'
     }],
-    wallet: {
+    walletId: [{
       type: ObjectId,
       ref: 'User'
+    }],
+    balance: {
+      type: Number,
+      default:0
     },
     otp: {
       type:String

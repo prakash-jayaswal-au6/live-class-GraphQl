@@ -55,6 +55,8 @@ export default gql`
     name: String
     role: String
     phone: String
+    balance: Int
+    walletId: [ID]
     referralCode: String
     referedFrom: ID
     referedUsers:[ID]
@@ -69,6 +71,8 @@ export default gql`
     name: String
     role: String
     phone: String
+    balance: Int
+    walletId: [ID]
     referralCode: String
     referedFrom: ID
     referedUsers:[ID]
@@ -85,6 +89,8 @@ export default gql`
     name: String
     role: String
     phone: String
+    balance: Int
+    walletId: [ID]
     referralCode: String
     referedFrom: ID
     parent:[ID]
