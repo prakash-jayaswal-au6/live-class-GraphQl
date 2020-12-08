@@ -46,14 +46,12 @@ const resolvers: IResolvers = {
             const existingClassTime = await OnlineClass.findOne({ scheduleDateTime: args.scheduleDateTime })
           //If user exist already then we will update it
           if (existingClassTime) {
-            const result = await OnlineClass.findByIdAndUpdate( args.id, { courseName: args.courseName, scheduleDateTime:args.scheduleDateTime, pricePerHour:args.pricePerHour },
-              (err, docs) => {
-                if (err) { 
-                  throw new Error('Class cant update ')
-                } else {
-                  console.log('Updated Class : ', docs)
-                }
-              }
+            const result = await OnlineClass.findByIdAndUpdate(args.id,{$set: {
+              courseName: args.courseName,
+              scheduleDateTime: args.scheduleDateTime,
+              pricePerHour: args.pricePerHour,
+              seats:args.seats
+            }}
               )
             return result
           } else {
@@ -66,7 +64,8 @@ const resolvers: IResolvers = {
                 courseName: args.courseName,
                 scheduleDateTime: args.scheduleDateTime,
                 pricePerHour: args.pricePerHour,
-                postedBy: args.postedBy
+                postedBy: args.postedBy,
+                seats:args.seats
             })  
             // console.log(onlineClass)
             const result = await onlineClass.save()

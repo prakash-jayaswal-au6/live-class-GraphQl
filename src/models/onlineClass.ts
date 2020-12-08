@@ -14,6 +14,10 @@ const onlineClassSchema = new Schema(
         type:String,
         required:true
     },
+    seats: {
+      type: Number,
+      required:true
+    },
     scheduleDateTime: {
       type: String,
       required:true

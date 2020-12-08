@@ -18,6 +18,11 @@ export default gql`
         userId:String!
         classId:String!
       ): User @admin @demo
+    
+    bookClass(
+        userId:String!
+        classId:String!
+      ): User @admin @demo
 
     requestToChild(
         parentId:String!

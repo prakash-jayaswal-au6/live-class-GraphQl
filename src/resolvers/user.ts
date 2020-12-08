@@ -7,6 +7,8 @@ import { Request, Response, UserDocument } from '../types'
 import { User, OnlineClass } from '../models'
 import nanoId from 'nano-id'
 import { any } from '@hapi/joi'
+import { mkdir } from 'fs'
+import { result } from 'lodash'
 
 const resolvers: IResolvers = {
   Query: {
@@ -124,6 +126,43 @@ const resolvers: IResolvers = {
       }
     },
 
+    bookClass: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      try {
+        //check class exist or not
+        const onlineClass = await OnlineClass.findById(args.classId)
+        if (onlineClass == null) throw new Error('Class not exist !')
+        // check user exist or not
+        const user = await User.findById(args.userId)
+        if (user == null) throw new Error('User not exist !')
+        const seat = onlineClass.seats
+        if (seat > 1) {
+          //@ts-ignore
+          await OnlineClass.findByIdAndUpdate(args.classId, { $addToSet: { users: args.userId }} )
+          await OnlineClass.findByIdAndUpdate(args.classId, { $set: { seats: seat-1 }} )
+          const result = await User.findByIdAndUpdate(
+            args.userId,
+            //@ts-ignore
+            { $addToSet: { onlineClasses: args.classId } },
+            (err, docs) => {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log('After add class in user  : ', docs)
+              }
+            }
+          )
+          return result
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+
     referrelUser: async (
       root,
       args,
@@ -190,7 +229,10 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       try {
         console.log(args.parentId)
-        const parent = await User.findOne({ _id: args.parentId, role: 'parent' || 'teacher' })
+        const parent = await User.findOne({
+          _id: args.parentId,
+          role: 'parent' || 'teacher',
+        })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
@@ -204,24 +246,26 @@ const resolvers: IResolvers = {
         //To send SMS use child.phone
         const otp = Math.floor(Math.random() * 100000)
         // console.log("otpIs :", otp)
-        const user = await User.findByIdAndUpdate(child.id, { $set: { otp: otp } })
-        console.log("OTP sent to the child")
+        const user = await User.findByIdAndUpdate(child.id, {
+          $set: { otp: otp },
+        })
+        console.log('OTP sent to the child')
         return user
-      } catch(err) {
+      } catch (err) {
         throw err
-      } 
+      }
     },
 
     addChildToParent: async (
       root,
       args,
       { req }: { req: Request },
-      info 
+      info
     ): Promise<UserDocument | null> => {
       try {
         const parent = await User.findOne({
           _id: args.parentId,
-          role: 'parent' || 'teacher' ,
+          role: 'parent' || 'teacher',
         })
         if (parent === null)
           throw new Error(
@@ -236,10 +280,14 @@ const resolvers: IResolvers = {
         // @ts-ignore
         if (child.otp == args.otp) {
           //updatig child in parent schema
-          const parentAfterUpdate = await User.findByIdAndUpdate(parent.id, { $addToSet: { children: child.id } })
+          const parentAfterUpdate = await User.findByIdAndUpdate(parent.id, {
+            $addToSet: { children: child.id },
+          })
           console.log(parentAfterUpdate)
           //updatig child in parent schema
-          const childAfterUpdate = await User.findByIdAndUpdate(child.id, { $addToSet: { parent: parent.id } })
+          const childAfterUpdate = await User.findByIdAndUpdate(child.id, {
+            $addToSet: { parent: parent.id },
+          })
           console.log(childAfterUpdate)
           //updating OTP as null
           await User.findByIdAndUpdate(child.id, { $set: { otp: null } })
@@ -258,9 +306,12 @@ const resolvers: IResolvers = {
       args,
       { req }: { req: Request },
       info
-    ): Promise<UserDocument | null> => { 
+    ): Promise<UserDocument | null> => {
       try {
-        const parent = await User.findOne({ _id: args.parentId, role: 'parent'})
+        const parent = await User.findOne({
+          _id: args.parentId,
+          role: 'parent',
+        })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
@@ -270,15 +321,19 @@ const resolvers: IResolvers = {
         // console.log("child: ", child)
         if (child === null)
           throw new Error('Child Does not Exist,Please provide valid childId ')
-        
-        await User.findByIdAndUpdate(parent.id, { $pull: {children: args.childId}})
-        await User.findByIdAndUpdate(child.id, { $pull: {parent: args.parentId}})
+
+        await User.findByIdAndUpdate(parent.id, {
+          $pull: { children: args.childId },
+        })
+        await User.findByIdAndUpdate(child.id, {
+          $pull: { parent: args.parentId },
+        })
 
         return parent
       } catch (err) {
         throw err
       }
-    }
+    },
   },
 }
 

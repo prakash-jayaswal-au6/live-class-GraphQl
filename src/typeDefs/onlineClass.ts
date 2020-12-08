@@ -7,27 +7,26 @@ export default gql`
   }
 
   extend type Mutation {
-    saveOnlineClass( 
-        id: String
-        courseName: String!
-        scheduleDateTime: String!
-        postedBy: ID!
-        pricePerHour: Int!
-        users: [ID]
-        ): OnlineClass @admin @demo
-      
-    deleteOnlineClass(id: ID!): Boolean @admin @demo
-    
-  }
+    saveOnlineClass(
+      id: String
+      courseName: String!
+      scheduleDateTime: String!
+      seats: Int
+      postedBy: ID!
+      pricePerHour: Int!
+      users: [ID]
+    ): OnlineClass @admin @demo
 
+    deleteOnlineClass(id: ID!): Boolean @admin @demo
+  }
 
   type OnlineClass {
     id: ID!
     courseName: String!
     scheduleDateTime: String!
+    seats: Int
     postedBy: ID!
     pricePerHour: Int!
     users: [ID]
   }
-
 `

@@ -1,10 +1,11 @@
 query{
 onlineClass(id:"5fcb2622863d131664f741cb"){
-   	id
+     id
     courseName
     scheduleDateTime
     pricePerHour
     users
+    seats
     postedBy
 }
 }

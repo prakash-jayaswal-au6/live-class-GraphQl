@@ -43,6 +43,10 @@ const userSchema = new Schema(
       type: ObjectId,
       ref: 'User'
     }],
+    wallet: {
+      type: ObjectId,
+      ref: 'User'
+    },
     otp: {
       type:String
     }
