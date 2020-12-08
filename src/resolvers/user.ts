@@ -137,23 +137,24 @@ const resolvers: IResolvers = {
         if (user == null) throw new Error('User not exist !')
         const seat = onlineClass.seats
         if (seat > 1) {
-          
-
           //@ts-ignore
-          await OnlineClass.findByIdAndUpdate(args.classId, { $addToSet: { users: args.userId }} )
-          await OnlineClass.findByIdAndUpdate(args.classId, { $set: { seats: seat-1 }} )
-          const result = await User.findByIdAndUpdate(
-            args.userId,
-            //@ts-ignore
-            { $addToSet: { onlineClasses: args.classId } },
-            (err, docs) => {
-              if (err) {
-                console.log(err)
-              } else {
-                console.log('After add class in user  : ', docs)
-              }
-            }
-          )
+          if (user.balance < onlineClass.pricePerHour)
+            throw new Error('User not have sufficient balance !')
+          //Adding user in the class
+          //@ts-ignore
+          await OnlineClass.findByIdAndUpdate(args.classId, { $addToSet: { users: args.userId } })
+          //change the seat avail in the class
+          await OnlineClass.findByIdAndUpdate(args.classId, { $set: { seats: seat - 1 } })
+          const teacher = await User.findById(onlineClass.postedBy)
+          console.log(teacher)
+          //Student amount will decrease
+          //@ts-ignore
+          await User.findByIdAndUpdate(user.id, { $set: { balance: user.balance - onlineClass.pricePerHour } })
+          //teacher amount will increase
+          //@ts-ignore
+          await User.findByIdAndUpdate(teacher.id, { $set: { balance: teacher.balance + onlineClass.pricePerHour } })
+          //@ts-ignore
+          const result = await User.findByIdAndUpdate(args.userId, { $addToSet: { onlineClasses: args.classId } })
           return result
         }
       } catch (err) {
@@ -210,7 +211,7 @@ const resolvers: IResolvers = {
             referedUser: newUser.id
            })
         const newWallet = await wallet.save()
-        
+
         await User.findByIdAndUpdate(userWhoRefered.id, { $addToSet: { walletId: newWallet.id } })
         // let balance = userWhoRefered.balance
         await User.findByIdAndUpdate( userWhoRefered.id,{ $set: { balance: userWhoRefered.balance+newWallet.amount } })

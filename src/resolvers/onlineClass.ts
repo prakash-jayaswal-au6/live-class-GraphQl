@@ -59,7 +59,7 @@ const resolvers: IResolvers = {
             if (userExist === null) {
               throw new Error(' User not Exist ')
             }
-            if (userExist.role == "author") {
+            if (userExist.role == "author" || "teacher") {
               const onlineClass = new OnlineClass({
                 courseName: args.courseName,
                 scheduleDateTime: args.scheduleDateTime,

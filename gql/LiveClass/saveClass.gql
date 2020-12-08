@@ -1,15 +1,38 @@
 mutation{
   saveOnlineClass(
-    courseName:"reactt",
-    scheduleDateTime:"2020-12-14T06:03:10.597C",
-    pricePerHour:70,
-  	postedBy:"5fcca8fd6a7992270871846d"
+    courseName:"networking",
+    scheduleDateTime:"2020-12-14T06:03:10.597A",
+    pricePerHour:50,
+    seats:20,
+  	postedBy:"5fcfc31c7e38853a20e8e9f8"
   ){
     id
     courseName
     scheduleDateTime
     pricePerHour
     users
+    postedBy
+  }
+}
+
+
+//For UPDATE
+
+mutation{
+  saveOnlineClass(
+    id:"5fcfc409e37f731e3c05dc21",
+    courseName:"networking",
+    scheduleDateTime:"2020-12-14T06:03:10.597A",
+    pricePerHour:50,
+    seats:20,
+  	postedBy:"5fcfc31c7e38853a20e8e9f8"
+  ){
+    id
+    courseName
+    scheduleDateTime
+    pricePerHour
+    users
+    seats
     postedBy
   }
 }
