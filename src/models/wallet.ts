@@ -13,15 +13,19 @@ const walletSchema = new Schema(
     userId: {
         type: ObjectId,
         ref: 'User'
-   },
+      },
     amount: {
         type: Number,
+        required: true
+      },
+    direction: {
+        type: String,
         required: true
       },
     remark: {
       type: String,
       required:true
-    },
+      },
     referedUser: {
         type: ObjectId,
         ref: 'User'
