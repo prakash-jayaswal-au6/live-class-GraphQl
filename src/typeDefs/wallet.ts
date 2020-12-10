@@ -8,13 +8,8 @@ export default gql`
   }
 
   extend type Mutation {
-    addMoney( 
-        amount: String
-        
-      ): Parent @admin @demo
-      
+    addMoney(amount: String): Parent
   }
-
 
   type Wallet {
     id: ID!
@@ -23,9 +18,8 @@ export default gql`
     amount: Int
     walletId: [ID]
     userId: ID
-    referedUser:ID
+    referedUser: ID
     createdAt: String!
     updatedAt: String!
   }
-
 `

@@ -1,10 +1,7 @@
-import { IResolvers,UserInputError,AuthenticationError, } from 'apollo-server-express'
+import { IResolvers } from 'apollo-server-express'
 import { Request, Response, UserDocument } from '../types'
 import { User, OnlineClass, Wallet } from '../models'
-import nanoId from 'nano-id'
-import { any } from '@hapi/joi'
-import { mkdir } from 'fs'
-import { result } from 'lodash'
+import { nanoid } from 'nanoid'
 
 const resolvers: IResolvers = {
   Query: {
@@ -57,7 +54,7 @@ const resolvers: IResolvers = {
           )
           return result
         } else {
-          const code = nanoId(5)
+          const code = nanoid(5)
           const user = new User({
             name: args.name,
             role: args.role,
@@ -96,26 +93,11 @@ const resolvers: IResolvers = {
         const result = await User.findByIdAndUpdate(
           args.userId,
           //@ts-ignore
-          { $addToSet: { onlineClasses: args.classId } },
-          (err, docs) => {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log('After add class in user  : ', docs)
-            }
-          }
+          { $addToSet: { onlineClasses: args.classId } }
         )
-        await OnlineClass.findByIdAndUpdate(
-          args.classId,
-          { $set: { users: args.userId } },
-          (err, docs) => {
-            if (err) {
-              console.log(err)
-            } else {
-              console.log('After add user in class : ', docs)
-            }
-          }
-        )
+        await OnlineClass.findByIdAndUpdate(args.classId, {
+          $set: { users: args.userId },
+        })
         return result
       } catch (err) {
         throw err
@@ -142,19 +124,29 @@ const resolvers: IResolvers = {
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
           //@ts-ignore
-          await OnlineClass.findByIdAndUpdate(args.classId, { $addToSet: { users: args.userId } })
+          await OnlineClass.findByIdAndUpdate(args.classId, {
+            $addToSet: { users: args.userId },
+          })
           //change the seat avail in the class
-          await OnlineClass.findByIdAndUpdate(args.classId, { $set: { seats: seat - 1 } })
+          await OnlineClass.findByIdAndUpdate(args.classId, {
+            $set: { seats: seat - 1 },
+          })
           const teacher = await User.findById(onlineClass.postedBy)
           console.log(teacher)
           //Student amount will decrease
           //@ts-ignore
-          await User.findByIdAndUpdate(user.id, { $set: { balance: user.balance - onlineClass.pricePerHour } })
+          await User.findByIdAndUpdate(user.id, {
+            $set: { balance: user.balance - onlineClass.pricePerHour },
+          })
           //teacher amount will increase
           //@ts-ignore
-          await User.findByIdAndUpdate(teacher.id, { $set: { balance: teacher.balance + onlineClass.pricePerHour } })
+          await User.findByIdAndUpdate(teacher.id, {
+            $set: { balance: teacher.balance + onlineClass.pricePerHour },
+          })
           //@ts-ignore
-          const result = await User.findByIdAndUpdate(args.userId, { $addToSet: { onlineClasses: args.classId } })
+          const result = await User.findByIdAndUpdate(args.userId, {
+            $addToSet: { onlineClasses: args.classId },
+          })
           return result
         }
       } catch (err) {
@@ -190,31 +182,37 @@ const resolvers: IResolvers = {
           )
         }
         //create  new user with phone number
-        const code = nanoId(5)
+        const code = nanoid(5)
         const user = new User({
           phone: args.phone,
           referralCode: code,
-          referedFrom: userWhoRefered.id
+          referedFrom: userWhoRefered.id,
         })
-//Now save the user to db
+        //Now save the user to db
         const newUser = await user.save()
         // console.log('newUser: ', newUser)
-// lets update the user whose refered
+        // lets update the user whose refered
         // @ts-ignore
-        await User.findByIdAndUpdate( userWhoRefered.id,{ $addToSet: { referedUsers: newUser.id } })
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { referedUsers: newUser.id },
+        })
         //create awallet
-           const wallet = new Wallet({
-            userId: userWhoRefered.id,
-            amount: 100,
-            operation: "+",
-            remark: "referrel bonus",
-            referedUser: newUser.id
-           })
+        const wallet = new Wallet({
+          userId: userWhoRefered.id,
+          amount: 100,
+          operation: '+',
+          remark: 'referrel bonus',
+          referedUser: newUser.id,
+        })
         const newWallet = await wallet.save()
 
-        await User.findByIdAndUpdate(userWhoRefered.id, { $addToSet: { walletId: newWallet.id } })
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { walletId: newWallet.id },
+        })
         // let balance = userWhoRefered.balance
-        await User.findByIdAndUpdate( userWhoRefered.id,{ $set: { balance: userWhoRefered.balance+newWallet.amount } })
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $set: { balance: userWhoRefered.balance + newWallet.amount },
+        })
         return newUser
       } catch (err) {
         throw err

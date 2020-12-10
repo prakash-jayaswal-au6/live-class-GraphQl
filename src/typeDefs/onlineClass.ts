@@ -15,9 +15,9 @@ export default gql`
       postedBy: ID!
       pricePerHour: Int!
       users: [ID]
-    ): OnlineClass @admin @demo
+    ): OnlineClass
 
-    deleteOnlineClass(id: ID!): Boolean @admin @demo
+    deleteOnlineClass(id: ID!): Boolean
   }
 
   type OnlineClass {

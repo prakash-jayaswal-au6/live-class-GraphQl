@@ -7,48 +7,22 @@ export default gql`
   }
 
   extend type Mutation {
-    saveUser( 
-        id: String
-        name: String
-        phone: String!
-        role: String
-      ): User @admin @demo
-      
-    addClassToUser(
-        userId:String!
-        classId:String!
-      ): User @admin @demo
-    
-    bookClass(
-        userId:String!
-        classId:String!
-      ): User @admin @demo
+    saveUser(id: String, name: String, phone: String!, role: String): User
 
-    requestToChild(
-        parentId:String!
-        childId:String!
-      ): Parent @admin @demo
+    addClassToUser(userId: String!, classId: String!): User
 
-    addChildToParent(
-        parentId:String!
-        childId:String!
-        otp:String!
-      ): Parent @admin @demo
+    bookClass(userId: String!, classId: String!): User
 
-    referrelUser(
-        referralCode:String!
-        phone:String!
-      ): User @admin @demo
+    requestToChild(parentId: String!, childId: String!): Parent
 
-    deleteUser(id: ID!): Boolean @admin @demo
-    
-    removeChildFromParent(
-      parentId: ID!
-      childId: ID!
-      ): Author @admin @demo
-    
+    addChildToParent(parentId: String!, childId: String!, otp: String!): Parent
+
+    referrelUser(referralCode: String!, phone: String!): User
+
+    deleteUser(id: ID!): Boolean
+
+    removeChildFromParent(parentId: ID!, childId: ID!): Author
   }
-
 
   type User {
     id: ID!
@@ -59,9 +33,9 @@ export default gql`
     walletId: [ID]
     referralCode: String
     referedFrom: ID
-    referedUsers:[ID]
-    onlineClasses:[ID]
-    otp:String
+    referedUsers: [ID]
+    onlineClasses: [ID]
+    otp: String
     createdAt: String!
     updatedAt: String!
   }
@@ -75,11 +49,11 @@ export default gql`
     walletId: [ID]
     referralCode: String
     referedFrom: ID
-    referedUsers:[ID]
-    onlineClasses:[ID]
-    otp:String
-    children:[ID]
-    parent:[ID]
+    referedUsers: [ID]
+    onlineClasses: [ID]
+    otp: String
+    children: [ID]
+    parent: [ID]
     createdAt: String!
     updatedAt: String!
   }
@@ -93,11 +67,10 @@ export default gql`
     walletId: [ID]
     referralCode: String
     referedFrom: ID
-    parent:[ID]
-    referedUsers:[ID]
-    children:[ID]
+    parent: [ID]
+    referedUsers: [ID]
+    children: [ID]
     createdAt: String!
     updatedAt: String!
   }
-
 `
