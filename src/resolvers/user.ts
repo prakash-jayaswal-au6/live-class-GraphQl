@@ -89,7 +89,7 @@ const resolvers: IResolvers = {
         const user = await User.findById(args.userId)
         if (user == null) throw new Error('User not exist !')
         const seat = product.seats
-        if (seat > 1) {  //@ts-ignore
+        if (seat > 1) { 
           if (user.currentBalance < product.pricePerHour)
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
@@ -97,11 +97,11 @@ const resolvers: IResolvers = {
           //change the seat avail in the class
           await Product.findByIdAndUpdate(args.productId, { $set: { seats: seat - 1 } })
           const teacher = await User.findById(product.postedBy)
+          if (teacher == null)
+            throw new Error("somthing wrong happend")
           //Student amount will decrease
-          //@ts-ignore
           await User.findByIdAndUpdate(user.id, { $set: { currentBalance: user.currentBalance - product.pricePerHour } })
           //teacher amount will increase
-          //@ts-ignore
           await User.findByIdAndUpdate(teacher.id, { $set: { currentBalance: teacher.currentBalance + product.pricePerHour } })
           const result = await User.findByIdAndUpdate(args.userId, { $addToSet: { products: args.productId } })
           return result
