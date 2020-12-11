@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    users: [Author!]!
-    user(id: String!): Author
+    users: [User!]!
+    user(id: String!): User
   }
 
   extend type Mutation {
@@ -14,26 +14,22 @@ export default gql`
         role: String
       ): User @admin @demo
       
-    addClassToUser(
-        userId:String!
-        classId:String!
-      ): User @admin @demo
     
-    bookClass(
+    bookProduct(
         userId:String!
-        classId:String!
+        productId:String!
       ): User @admin @demo
 
     requestToChild(
         parentId:String!
         childId:String!
-      ): Parent @admin @demo
+      ): User @admin @demo
 
     addChildToParent(
         parentId:String!
         childId:String!
         otp:String!
-      ): Parent @admin @demo
+      ): User @admin @demo
 
     referrelUser(
         referralCode:String!
@@ -45,7 +41,7 @@ export default gql`
     removeChildFromParent(
       parentId: ID!
       childId: ID!
-      ): Author @admin @demo
+      ): User @admin @demo
     
   }
 
@@ -55,49 +51,17 @@ export default gql`
     name: String
     role: String
     phone: String
-    balance: Int
+    currentBalance: Int
     walletId: [ID]
     referralCode: String
     referedFrom: ID
     referedUsers:[ID]
-    onlineClasses:[ID]
-    otp:String
-    createdAt: String!
-    updatedAt: String!
-  }
-
-  type Author {
-    id: ID!
-    name: String
-    role: String
-    phone: String
-    balance: Int
-    walletId: [ID]
-    referralCode: String
-    referedFrom: ID
-    referedUsers:[ID]
-    onlineClasses:[ID]
+    products:[ID]
     otp:String
     children:[ID]
     parent:[ID]
     createdAt: String!
     updatedAt: String!
   }
-
-  type Parent {
-    id: ID!
-    name: String
-    role: String
-    phone: String
-    balance: Int
-    walletId: [ID]
-    referralCode: String
-    referedFrom: ID
-    parent:[ID]
-    referedUsers:[ID]
-    children:[ID]
-    createdAt: String!
-    updatedAt: String!
-  }
-
+ 
 `

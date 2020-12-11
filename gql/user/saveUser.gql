@@ -28,7 +28,7 @@ mutation{
     name
     role
     phone
-    balance
+    currentBalance
     referedFrom
     referedUsers
     referralCode

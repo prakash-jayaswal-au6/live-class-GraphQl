@@ -1,4 +1,3 @@
-import { number } from '@hapi/joi'
 import mongoose, { Schema } from 'mongoose'
 import { UserDocument } from '../types'
 
@@ -32,9 +31,9 @@ const userSchema = new Schema(
       type: ObjectId,
       ref: 'User'
     }],
-    onlineClasses: [{
+    products: [{
       type: ObjectId,
-      ref: 'OnlineClass'
+      ref: 'Product'
     }],
     children: [{
       type: ObjectId,
@@ -48,7 +47,7 @@ const userSchema = new Schema(
       type: ObjectId,
       ref: 'User'
     }],
-    balance: {
+    currentBalance: {
       type: Number,
       default:0
     },

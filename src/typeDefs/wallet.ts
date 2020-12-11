@@ -3,26 +3,25 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     allTransactions: [Wallet!]!
-    userTransaction(userId: String!): Wallet
-    transaction(transactionId: String!): Wallet
+    userTransaction(userId: String!): [Wallet]
+    transaction(walletId: String!): Wallet
   }
 
   extend type Mutation {
     addMoney( 
-        amount: String
-        
-      ): Parent @admin @demo
-      
+        userId:String
+        amount: Int     
+      ): Wallet @admin @demo   
   }
 
 
   type Wallet {
     id: ID!
-    operation: String
+    direction: String
     remark: String
     amount: Int
-    walletId: [ID]
     userId: ID
+    balance: Int
     referedUser:ID
     createdAt: String!
     updatedAt: String!

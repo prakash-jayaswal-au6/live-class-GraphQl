@@ -18,7 +18,7 @@ const walletSchema = new Schema(
         type: Number,
         required: true
       },
-    operation: {
+    direction: {
         type: String,
         required: true
       },
@@ -29,7 +29,12 @@ const walletSchema = new Schema(
     referedUser: {
         type: ObjectId,
         ref: 'User'
-    }
+    },
+    balance: {
+      type: Number,
+      default:0,
+      required: true
+      }
    },
   schemaOptions
 )

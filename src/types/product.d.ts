@@ -1,7 +1,7 @@
 import { Document } from 'mongoose'
 import { UserDocument } from './user'
 
-export interface OnlineClassDocument extends Document {
+export interface ProductDocument extends Document {
   courseName: string
   scheduleDateTime: string
   seats: number

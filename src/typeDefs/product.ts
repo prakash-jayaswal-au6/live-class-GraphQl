@@ -2,12 +2,12 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    onlineClasses: [OnlineClass!]!
-    onlineClass(id: String!): OnlineClass
+    products: [Product!]!
+    product(id: String!): Product
   }
 
   extend type Mutation {
-    saveOnlineClass(
+    saveProduct(
       id: String
       courseName: String!
       scheduleDateTime: String!
@@ -15,12 +15,12 @@ export default gql`
       postedBy: ID!
       pricePerHour: Int!
       users: [ID]
-    ): OnlineClass @admin @demo
+    ): Product @admin @demo
 
-    deleteOnlineClass(id: ID!): Boolean @admin @demo
+    deleteProduct(id: ID!): Boolean @admin @demo
   }
 
-  type OnlineClass {
+  type Product {
     id: ID!
     courseName: String!
     scheduleDateTime: String!

@@ -8,7 +8,7 @@ import {
     Response,
     WalletDocument,
   } from '../types'
-  import { OnlineClass, User,Wallet } from '../models'
+  import { Product, User,Wallet } from '../models'
 import { argsToArgsConfig } from 'graphql/type/definition'
   
 const resolvers: IResolvers = {
@@ -21,7 +21,7 @@ const resolvers: IResolvers = {
         } catch (err) {
           throw err
         }
-        },
+      },
         
     userTransaction: async (
         root,
@@ -29,18 +29,26 @@ const resolvers: IResolvers = {
         ctx,
         info
       ): Promise<WalletDocument | null> => {
-        return Wallet.findById({userId:args.userId})
-      },
+      const result = await Wallet.find({ userId: args.userId })
+      console.log(result)  
+      //@ts-ignore
+      return result
+    },
     
-    transaction: async () => {
+    transaction: async (
+      root,
+      args,
+      ctx,
+      info
+    ): Promise<WalletDocument | null> => {
         try {
-          const result = await Wallet.find()
+          const result = await Wallet.findById(args.walletId)
+          if (result == null) throw new Error('transaction id is not valid !')
           return result
         } catch (err) {
           throw err
         }
-    },
-      
+    },      
 
   },
   
@@ -54,14 +62,25 @@ const resolvers: IResolvers = {
         info
       ): Promise<WalletDocument | null> => {
         try {
-            return null  
+        // check user exist or not
+          const user = await User.findById(args.userId)
+          if (user == null) throw new Error('User not exist !')
+          const wallet = new Wallet({
+            userId: user.id,
+            amount: args.amount,
+            direction: "+",
+            remark: "add money",
+            balance: user.currentBalance+args.amount
+           })
+        const newWallet = await wallet.save()
+        await User.findByIdAndUpdate(user.id, { $addToSet: { walletId: newWallet.id } })
+        await User.findByIdAndUpdate( user.id,{ $set: { currentBalance: user.currentBalance+newWallet.amount } })
+          return null  
         } catch (err) {
           throw err
         } 
     },
-
-  
-    },
-  }
+  },
+}
   
   export default resolvers

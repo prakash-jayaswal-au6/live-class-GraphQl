@@ -1,5 +1,5 @@
 query{
-onlineClass(id:"5fcb2622863d131664f741cb"){
+product(id:"5fd1ec026a8fca1c7816f047"){
      id
     courseName
     scheduleDateTime

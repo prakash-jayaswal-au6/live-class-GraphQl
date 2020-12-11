@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import {OnlineClassDocument } from '../types'
+import {ProductDocument } from '../types'
 const { ObjectId } = Schema.Types
 
 var schemaOptions = {
@@ -8,7 +8,7 @@ var schemaOptions = {
   versionKey: false,
   timestamps: true,
 }
-const onlineClassSchema = new Schema(
+const productSchema = new Schema(
   {
     courseName:{
         type:String,
@@ -39,4 +39,4 @@ const onlineClassSchema = new Schema(
 )
 
 
-export const OnlineClass = mongoose.model<OnlineClassDocument>( 'OnlineClass', onlineClassSchema )
+export const Product = mongoose.model<ProductDocument>( 'Product', productSchema )

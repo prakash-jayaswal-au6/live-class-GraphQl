@@ -4,12 +4,12 @@ query{
   name
   role
   phone
-  balance
+  currentBalance
   otp
   walletId
   children
   parent
-  onlineClasses
+  products
   referralCode
   referedFrom
   referedUsers

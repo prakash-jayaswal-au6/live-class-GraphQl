@@ -1,12 +1,17 @@
 query{
-  user(id:"5fca517b3da7cc32040b13ac"){
-    id 
-    name
-    email
-    role
-    phone
-    balance
-    walletId
-    onlineClasses
+  user(id:"5fd1dc317dc10a129468e638"){
+  id
+  name
+  role
+  phone
+  currentBalance
+  otp
+  walletId
+  children
+  parent
+  products
+  referralCode
+  referedFrom
+  referedUsers
   }
 }

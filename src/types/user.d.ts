@@ -1,15 +1,15 @@
 import { Document } from 'mongoose'
-import { OnlineClassDocument } from './onlineClass';
+import { ProductDocument } from './product';
 
 
 export interface UserDocument extends Document {
   name: string
   role: string
   phone: string
-  balance: number
+  currentBalance: number
   referralCode: string
   referedFrom: UserDocument['_id']
   referedUsers:UserDocument['_id']
-  onlineClasses: OnlineClassDocument['_id']
+  onlineClasses: ProductDocument['_id']
 }
 
