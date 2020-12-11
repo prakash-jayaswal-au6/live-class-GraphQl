@@ -13,8 +13,7 @@ export default gql`
         phone: String!
         role: String
       ): User @admin @demo
-      
-    
+
     bookProduct(
         userId:String!
         productId:String!
@@ -31,21 +30,21 @@ export default gql`
         otp:String!
       ): User @admin @demo
 
-    requestToChild(parentId: String!, childId: String!): Parent
 
     deleteUser(id: ID!): Boolean @admin @demo
     
     removeChildFromParent(
       parentId: ID!
       childId: ID!
-      ): User @admin @demo
+      ): User @admin @demo 
     
+  referrelUser(
+    referralCode: String
+    phone: String
+    ): User @admin @demo   
+     
   }
-
-    deleteUser(id: ID!): Boolean
-
-    removeChildFromParent(parentId: ID!, childId: ID!): Author
-  }
+  
 
   type User {
     id: ID!

@@ -93,7 +93,6 @@ const resolvers: IResolvers = {
           if (user.currentBalance < product.pricePerHour)
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
-          //@ts-ignore
           await Product.findByIdAndUpdate(args.productId, { $addToSet: { users: args.userId } })
           //change the seat avail in the class
           await Product.findByIdAndUpdate(args.productId, { $set: { seats: seat - 1 } })
@@ -107,6 +106,7 @@ const resolvers: IResolvers = {
           const result = await User.findByIdAndUpdate(args.userId, { $addToSet: { products: args.productId } })
           return result
         }
+        return null
       } catch (err) {
         throw err
       }
