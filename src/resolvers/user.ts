@@ -144,7 +144,6 @@ const resolvers: IResolvers = {
         })
         const newUser = await user.save()
 // lets update the user whose refered
-        // @ts-ignore
         await User.findByIdAndUpdate( userWhoRefered.id,{ $addToSet: { referedUsers: newUser.id } })
            const wallet = new Wallet({
             userId: userWhoRefered.id,

@@ -30,7 +30,6 @@ const resolvers: IResolvers = {
         info
       ): Promise<WalletDocument | null> => {
       const result = await Wallet.find({ userId: args.userId })
-      console.log(result)  
       //@ts-ignore
       return result
     },
