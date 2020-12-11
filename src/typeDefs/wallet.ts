@@ -14,7 +14,6 @@ export default gql`
       ): Wallet @admin @demo   
   }
 
-
   type Wallet {
     id: ID!
     direction: String
@@ -26,5 +25,4 @@ export default gql`
     createdAt: String!
     updatedAt: String!
   }
-
 `

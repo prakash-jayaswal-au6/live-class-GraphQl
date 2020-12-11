@@ -1,4 +1,4 @@
-import { IResolvers,UserInputError,AuthenticationError, } from 'apollo-server-express'
+import { IResolvers } from 'apollo-server-express'
 import { Request, Response, UserDocument } from '../types'
 import { User, Product, Wallet } from '../models'
 import { nanoid } from 'nanoid'
@@ -140,7 +140,7 @@ const resolvers: IResolvers = {
         const user = new User({
           phone: args.phone,
           referralCode: code,
-          referedFrom: userWhoRefered.id
+          referedFrom: userWhoRefered.id,
         })
         const newUser = await user.save()
 // lets update the user whose refered

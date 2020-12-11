@@ -31,10 +31,7 @@ export default gql`
         otp:String!
       ): User @admin @demo
 
-    referrelUser(
-        referralCode:String!
-        phone:String!
-      ): User @admin @demo
+    requestToChild(parentId: String!, childId: String!): Parent
 
     deleteUser(id: ID!): Boolean @admin @demo
     
@@ -45,6 +42,10 @@ export default gql`
     
   }
 
+    deleteUser(id: ID!): Boolean
+
+    removeChildFromParent(parentId: ID!, childId: ID!): Author
+  }
 
   type User {
     id: ID!
