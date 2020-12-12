@@ -1,30 +1,44 @@
 <template>
   <!-- <div>
-    <div v-for="p in products" :key="p.id">
+    
       {{ p.courseName }}
     </div>
   </div> -->
   <!-- component -->
-  <!-- animation -->
-  <section
-    class="p-10 min-h-screen flex md:flex-row items-center justify-around bg-blue-500 flex-wrap sm:flex-col"
-  >
-    <!-- scale -->
+  <div>
     <div v-for="p in products" :key="p.id">
-      <div class="h-32 w-32 relative cursor-pointer mb-5">
+      <div class="max-w-md w-full lg:flex">
         <div
-          class="absolute inset-0 bg-white opacity-25 rounded-lg shadow-2xl"
+          class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
+          style="background-image: url('https://tailwindcss.com/img/card-left.jpg')"
+          title="Woman holding a mug"
         ></div>
         <div
-          class="absolute inset-0 transform  hover:scale-75 transition duration-300"
+          class="border-r border-b border-l border-grey-light lg:border-l-0 lg:border-t lg:border-grey-light bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal"
         >
-          <div class="h-full w-full bg-white rounded-lg shadow-2xl">
-            {{ p.courseName }}
+          <div class="mb-8">
+            <div class="text-black font-bold text-xl mb-2">
+              {{ p.courseName }}
+            </div>
+            Price ₹{{ p.pricePerHour }} /Hour
+            <p class="text-grey-darker text-base">
+              Available Seats {{ p.seats }}
+            </p>
+          </div>
+          <div class="flex items-center">
+            <img
+              class="w-10 h-10 rounded-full mr-4"
+              src="https://pbs.twimg.com/profile_images/885868801232961537/b1F6H4KC_400x400.jpg"
+              alt="Avatar of Jonathan Reinink"
+            />
+            <div class="text-sm">
+              <p class="text-black leading-none">{{ p.postedBy }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
