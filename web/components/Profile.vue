@@ -3,7 +3,7 @@
     <h1>{{ profile }}</h1>
   </div> -->
   <!-- This example requires Tailwind CSS v2.0+ -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg" v-if="profile">
     <div class="px-4 py-5 sm:px-6">
       <h3 class="text-lg leading-6 font-medium text-gray-900">
         Applicant Information
@@ -22,7 +22,7 @@
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <!-- {{ profile.name }} -->
-            {{ profile }}
+            {{ profile.name }}
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -30,7 +30,7 @@
             Role
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            parent
+            {{ profile.role }}
           </dd>
         </div>
         <div
@@ -40,8 +40,7 @@
             Contact No.
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <!-- {{ profile.phone }} -->
-            9694039047
+            {{ profile.phone }}
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -49,8 +48,7 @@
             Current Balance
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <!-- $ {{ profile.currentBalance }} -->
-            3000 Rupees
+            {{ profile.currentBalance }} ₹
           </dd>
         </div>
         <div
@@ -60,7 +58,7 @@
             Referral Code
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            referralCode
+            {{ profile.referralCode }}
           </dd>
         </div>
         <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
