@@ -1,6 +1,6 @@
-query{
-  products{
-     id
+query products {
+  products {
+    id
     courseName
     scheduleDateTime
     pricePerHour
@@ -9,6 +9,3 @@ query{
     postedBy
   }
 }
-
-
-

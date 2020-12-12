@@ -1,17 +1,17 @@
-query{
-  user(id:"5fd1dc317dc10a129468e638"){
-  id
-  name
-  role
-  phone
-  currentBalance
-  otp
-  walletId
-  children
-  parent
-  products
-  referralCode
-  referedFrom
-  referedUsers
+query user($id: String!) {
+  user(id: $id) {
+    id
+    name
+    role
+    phone
+    currentBalance
+    otp
+    walletId
+    children
+    parent
+    products
+    referralCode
+    referedFrom
+    referedUsers
   }
 }

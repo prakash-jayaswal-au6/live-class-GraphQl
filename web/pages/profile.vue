@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Classes</h1>
-    <classes />
+    <h1>Profile</h1>
+    <Profile />
   </div>
 </template>
 

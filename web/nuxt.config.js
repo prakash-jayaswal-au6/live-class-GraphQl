@@ -39,10 +39,10 @@ export default {
     }
   },
   proxy: {
-    '/graphql': 'http://localhost:8800',
-    '/api': 'http://localhost:8800',
-    '/auth': 'http://localhost:8800',
-    '/images': 'http://localhost:8800'
+    '/graphql': 'http://localhost:3000',
+    '/api': 'http://localhost:3000',
+    '/auth': 'http://localhost:3000',
+    '/images': 'http://localhost:3000'
   },
   plugins: [{ src: '~/plugins/lazy.js', mode: 'client' }],
   modules: [

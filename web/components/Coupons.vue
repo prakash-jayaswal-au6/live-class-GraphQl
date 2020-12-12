@@ -110,11 +110,14 @@ export default {
     },
     async saveCoupon(c) {
       if (!c.id) c.id = 'new'
+      console.log('ccc', c)
+      console.log(typeof c)
       try {
         await this.$apollo.mutate({
           mutation: SAVE_COUPON,
           variables: c
         })
+
         await this.getCoupons()
       } catch (e) {
       } finally {

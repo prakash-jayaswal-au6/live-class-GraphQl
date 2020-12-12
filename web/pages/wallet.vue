@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Classes</h1>
-    <classes />
+    <h1>Wallet</h1>
+    <Wallet />
   </div>
 </template>
 

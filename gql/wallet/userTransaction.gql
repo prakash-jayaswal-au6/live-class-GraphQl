@@ -1,10 +1,11 @@
-query{
-  userTransaction(userId:"5fd225f5689b1e2dac8fce28"){
+query userTransaction($userId: String!) {
+  userTransaction(userId: $userId) {
     id
     amount
     remark
     direction
     userId
+    balance
     referedUser
     createdAt
     updatedAt

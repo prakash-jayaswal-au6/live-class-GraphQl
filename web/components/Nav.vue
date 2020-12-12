@@ -1,4 +1,3 @@
-
 <template>
   <header>
     <div class="fixed top-0 z-10 w-full bg-white shadow lg:opacity-75 blur">
@@ -18,7 +17,6 @@
           </nuxt-link>
         </div>
         <div class="flex items-center flex-shrink-0">
-     
           <button
             @click="showSidebar"
             aria-label="Open Menu"
@@ -106,6 +104,9 @@ export default {
         { link: '/login', text: 'Login' },
         { link: '/classes', text: 'Classes' },
         { link: '/forms', text: 'Forms' },
+        { link: '/profile', text: 'Profile' },
+        { link: '/refer', text: 'Refer' },
+        { link: '/wallet', text: 'Wallet' }
       ]
     }
   },

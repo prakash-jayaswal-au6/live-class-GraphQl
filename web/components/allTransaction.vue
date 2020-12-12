@@ -89,37 +89,36 @@
 </template>
 
 <script>
-import MY_TRANSACTIONS from '~/../gql/wallet/userTransaction.gql'
+import ALL_TRANSACTIONS from '~/../gql/wallet/allTransactions.gql'
 import ADD_MONEY from '~/../gql/wallet/addMoney.gql'
 export default {
   data() {
     return {
+      x: 10,
+      y: 0,
       transactions: null,
       amount: null
     }
   },
   async created() {
-    const userId = '5fd3248f01f1550a88df1391'
-    await this.myTransactions(userId)
+    await this.getTransactions()
   },
   methods: {
-    async myTransactions(userId) {
+    async getTransactions() {
       try {
         const transactions = await this.$apollo.query({
-          query: MY_TRANSACTIONS,
-          variables: { userId },
+          query: ALL_TRANSACTIONS,
           fetchPolicy: 'no-cache'
         })
-
-        // console.log(transactions.data.userTransaction)
-        this.transactions = transactions.data.userTransaction
+        console.log(transactions.data.allTransactions)
+        this.transactions = transactions.data.allTransactions
       } catch (e) {
       } finally {
       }
     },
     async addMoney(amount) {
       const userId = '5fd3248f01f1550a88df1391'
-      // console.log(amount)
+      console.log(amount)
       try {
         const data = (
           await this.$apollo.mutate({
@@ -128,8 +127,8 @@ export default {
             fetchPolicy: 'no-cache'
           })
         ).data.addMoney
-        // console.log('xxxxx', data)
-        await this.myTransactions(userId)
+        console.log('xxxxx', data)
+        await this.getTransactions()
       } catch (e) {
         console.log('eeee', e)
       } finally {
