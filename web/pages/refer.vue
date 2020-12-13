@@ -1,15 +1,12 @@
 <template>
   <div>
-      <h1>Refer</h1>
+    <h1>Refer</h1>
+    <Refer />
   </div>
 </template>
 
 <script>
-export default {
-
-}
+export default {}
 </script>
 
-<style>
-
-</style>
+<style></style>

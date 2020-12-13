@@ -1,0 +1,24 @@
+mutation saveProduct(
+  $id: String
+  $courseName: String!
+  $scheduleDateTime: String!
+  $pricePerHour: Int!
+  $seats: Int!
+  $postedBy: ID!
+) {
+  saveProduct(
+    id: $id
+    courseName: $courseName
+    scheduleDateTime: $scheduleDateTime
+    pricePerHour: $pricePerHour
+    seats: $seats
+    postedBy: $postedBy
+  ) {
+    id
+    courseName
+    scheduleDateTime
+    pricePerHour
+    users
+    postedBy
+  }
+}

@@ -1,0 +1,17 @@
+query users {
+  users {
+    id
+    name
+    role
+    phone
+    currentBalance
+    otp
+    walletId
+    children
+    parent
+    products
+    referralCode
+    referedFrom
+    referedUsers
+  }
+}

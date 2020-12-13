@@ -1,21 +1,17 @@
 <template>
-  <!-- <div>
-    <h1>{{ profile }}</h1>
-  </div> -->
-  <!-- This example requires Tailwind CSS v2.0+ -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg" v-if="profile">
+  <div class="overflow-hidden bg-white shadow sm:rounded-lg" v-if="profile">
     <div class="px-4 py-5 sm:px-6">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">
+      <h3 class="text-lg font-medium leading-6 text-gray-900">
         Applicant Information
       </h3>
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">
+      <p class="max-w-2xl mt-1 text-sm text-gray-500">
         Personal details and application.
       </p>
     </div>
     <div class="border-t border-gray-200">
       <dl>
         <div
-          class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+          class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
         >
           <dt class="text-sm font-medium text-gray-500">
             Full name
@@ -25,7 +21,7 @@
             {{ profile.name }}
           </dd>
         </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
           <dt class="text-sm font-medium text-gray-500">
             Role
           </dt>
@@ -34,7 +30,7 @@
           </dd>
         </div>
         <div
-          class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+          class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
         >
           <dt class="text-sm font-medium text-gray-500">
             Contact No.
@@ -43,7 +39,7 @@
             {{ profile.phone }}
           </dd>
         </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
           <dt class="text-sm font-medium text-gray-500">
             Current Balance
           </dt>
@@ -52,7 +48,7 @@
           </dd>
         </div>
         <div
-          class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+          class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
         >
           <dt class="text-sm font-medium text-gray-500">
             Referral Code
@@ -61,28 +57,28 @@
             {{ profile.referralCode }}
           </dd>
         </div>
-        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
           <dt class="text-sm font-medium text-gray-500">
             children
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             <ul
-              class="border border-gray-200 rounded-md divide-y divide-gray-200"
+              class="border border-gray-200 divide-y divide-gray-200 rounded-md"
             >
               <li
-                class="pl-3 pr-4 py-3 flex items-center justify-between text-sm"
+                class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
               >
-                <div class="w-0 flex-1 flex items-center">
+                <div class="flex items-center flex-1 w-0">
                   <!-- Heroicon name: paper-clip -->
-                  <span class="ml-2 flex-1 w-0 truncate"> Children 1 </span>
+                  <span class="flex-1 w-0 ml-2 truncate"> Children 1 </span>
                 </div>
               </li>
               <li
-                class="pl-3 pr-4 py-3 flex items-center justify-between text-sm"
+                class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
               >
-                <div class="w-0 flex-1 flex items-center">
+                <div class="flex items-center flex-1 w-0">
                   <!-- Heroicon name: paper-clip -->
-                  <span class="ml-2 flex-1 w-0 truncate"> Children 2 </span>
+                  <span class="flex-1 w-0 ml-2 truncate"> Children 2 </span>
                 </div>
               </li>
             </ul>
@@ -94,7 +90,7 @@
 </template>
 
 <script>
-import MY_PROFILE from '~/../gql/user/getUser.gql'
+import MY_PROFILE from '~/../gql/user/user.gql'
 
 export default {
   data() {
@@ -103,7 +99,7 @@ export default {
     }
   },
   async created() {
-    const userId = '5fd3248f01f1550a88df1391'
+    const userId = '5fd601893d802627307082fe'
     await this.myProfile(userId)
   },
   methods: {

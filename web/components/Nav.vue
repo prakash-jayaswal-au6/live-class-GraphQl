@@ -102,7 +102,7 @@ export default {
       links: [
         { link: '/', text: 'Home' },
         { link: '/login', text: 'Login' },
-        { link: '/classes', text: 'Classes' },
+        { link: '/classes', text: 'Live Classes' },
         { link: '/forms', text: 'Forms' },
         { link: '/profile', text: 'Profile' },
         { link: '/refer', text: 'Refer' },
