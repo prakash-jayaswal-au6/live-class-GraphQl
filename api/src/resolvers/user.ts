@@ -1,12 +1,42 @@
-import { IResolvers } from 'apollo-server-express'
-import { Request, Response, UserDocument } from '../types'
-import { User, Product, Wallet } from '../models'
+import {
+  IResolvers,
+  UserInputError,
+  AuthenticationError,
+} from 'apollo-server-express'
+import { Request, Response, UserDocument, InfoDocument } from '../types'
+import {
+  signUp,
+  signIn,
+  objectId,
+  signInOtp,
+  gender,
+  validate,
+  registerSchema,
+  loginSchema,
+  changePasswordSchema,
+  verifyEmailSchema,
+  resendEmailSchema,
+  resetPasswordSchema,
+  forgotPasswordSchema,
+} from '../validation'
+import { verifyOtp, signOut } from '../auth'
+import { Product, User, Wallet } from '../models'
+import { fields, generateOTP, requestOTP } from '../utils'
 import { nanoid } from 'nanoid'
 
 const resolvers: IResolvers = {
   Query: {
-    // To get all Users
-    users: async () => {
+    me: (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      return User.findById(req.session.userId, fields(info))
+        .populate('scope')
+        .exec()
+    },
+    users: async (root, args, { req }: { req: Request }, info) => {
       try {
         const user = await User.find()
         return user
@@ -14,19 +44,34 @@ const resolvers: IResolvers = {
         throw err
       }
     },
-
-    //To get one user
     user: async (
       root,
       args: { id: string },
       ctx,
       info
     ): Promise<UserDocument | null> => {
-      return User.findById(args.id)
+      return User.findById(args.id, fields(info))
     },
   },
-
   Mutation: {
+    addClassToUser: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      try {
+        const result = await User.findByIdAndUpdate(args.userId, {
+          $addToSet: { onlineClasses: args.classId },
+        })
+        await Product.findByIdAndUpdate(args.classId, {
+          $set: { users: args.userId },
+        })
+        return result
+      } catch (err) {
+        throw err
+      }
+    },
     //to save or update user
     saveUser: async (
       root,
@@ -42,7 +87,9 @@ const resolvers: IResolvers = {
         const existingUser = await User.findOne({ phone: args.phone })
         //If user exist already then we will update it
         if (existingUser) {
-          const result = await User.findByIdAndUpdate(args.id, { $set: { name: args.name, role: args.role, phone: args.phone } }  )
+          const result = await User.findByIdAndUpdate(args.id, {
+            $set: { name: args.name, role: args.role, phone: args.phone },
+          })
           return result
         } else {
           const code = nanoid(5)
@@ -74,7 +121,6 @@ const resolvers: IResolvers = {
       }
     },
 
-    
     bookProduct: async (
       root,
       args,
@@ -89,21 +135,34 @@ const resolvers: IResolvers = {
         const user = await User.findById(args.userId)
         if (user == null) throw new Error('User not exist !')
         const seat = product.seats
-        if (seat > 1) { 
+        if (seat > 1) {
           if (user.currentBalance < product.pricePerHour)
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
-          await Product.findByIdAndUpdate(args.productId, { $addToSet: { users: args.userId } })
+          await Product.findByIdAndUpdate(args.productId, {
+            $addToSet: { users: args.userId },
+          })
           //change the seat avail in the class
-          await Product.findByIdAndUpdate(args.productId, { $set: { seats: seat - 1 } })
+          await Product.findByIdAndUpdate(args.productId, {
+            $set: { seats: seat - 1 },
+          })
           const teacher = await User.findById(product.postedBy)
-          if (teacher == null)
-            throw new Error("somthing wrong happend")
+          if (teacher == null) throw new Error('somthing wrong happend')
           //Student amount will decrease
-          await User.findByIdAndUpdate(user.id, { $set: { currentBalance: user.currentBalance - product.pricePerHour } })
+          await User.findByIdAndUpdate(user.id, {
+            $set: {
+              currentBalance: user.currentBalance - product.pricePerHour,
+            },
+          })
           //teacher amount will increase
-          await User.findByIdAndUpdate(teacher.id, { $set: { currentBalance: teacher.currentBalance + product.pricePerHour } })
-          const result = await User.findByIdAndUpdate(args.userId, { $addToSet: { products: args.productId } })
+          await User.findByIdAndUpdate(teacher.id, {
+            $set: {
+              currentBalance: teacher.currentBalance + product.pricePerHour,
+            },
+          })
+          const result = await User.findByIdAndUpdate(args.userId, {
+            $addToSet: { products: args.productId },
+          })
           return result
         }
         return null
@@ -120,14 +179,16 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       try {
         //first find the refel code user
-        const userWhoRefered = await User.findOne({ referralCode: args.referralCode, })
+        const userWhoRefered = await User.findOne({
+          referralCode: args.referralCode,
+        })
         if (userWhoRefered == null) {
           throw new Error('Referel Code incorrect ')
         }
         if (args.phone.length < 10 || args.phone.length > 10) {
           throw new Error('Please enter valid phone number ')
         }
-       
+
         //lets check phone number already exist or not
         const checkUser = await User.findOne({ phone: args.phone })
         if (checkUser) {
@@ -135,7 +196,7 @@ const resolvers: IResolvers = {
             'Phone Number already exist in database,please choose another phone Number. '
           )
         }
-        //create  new user with phone number  
+        //create  new user with phone number
         const code = nanoid(5)
         const user = new User({
           phone: args.phone,
@@ -143,21 +204,29 @@ const resolvers: IResolvers = {
           referedFrom: userWhoRefered.id,
         })
         const newUser = await user.save()
-// lets update the user whose refered
-        await User.findByIdAndUpdate( userWhoRefered.id,{ $addToSet: { referedUsers: newUser.id } })
-           const wallet = new Wallet({
-            userId: userWhoRefered.id,
-            amount: 100,
-            direction: "+",
-            remark: "referrel bonus",
-            referedUser: newUser.id,
-            balance: userWhoRefered.currentBalance+args.amount
-           })
+        // lets update the user whose refered
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { referedUsers: newUser.id },
+        })
+        const wallet = new Wallet({
+          userId: userWhoRefered.id,
+          amount: 100,
+          direction: '+',
+          remark: 'referrel bonus',
+          referedUser: newUser.id,
+          balance: userWhoRefered.currentBalance + args.amount,
+        })
         const newWallet = await wallet.save()
 
-        await User.findByIdAndUpdate(userWhoRefered.id, { $addToSet: { walletId: newWallet.id } })
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { walletId: newWallet.id },
+        })
         // let currentBalance = userWhoRefered.currentBalance
-        await User.findByIdAndUpdate( userWhoRefered.id,{ $set: { currentBalance: userWhoRefered.currentBalance+newWallet.amount } })
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $set: {
+            currentBalance: userWhoRefered.currentBalance + newWallet.amount,
+          },
+        })
         return newUser
       } catch (err) {
         throw err
@@ -172,7 +241,10 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       try {
         // console.log(args.parentId)
-        const parent = await User.findOne({ _id: args.parentId, role: 'parent' })
+        const parent = await User.findOne({
+          _id: args.parentId,
+          role: 'parent' || 'teacher',
+        })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
@@ -182,10 +254,11 @@ const resolvers: IResolvers = {
         // console.log('child: ', child)
         if (child === null)
           throw new Error('Child Does not Exist,Please provide valid childId ')
-        //To send SMS us e child.phone
-        const otp = Math.floor(Math.random() * 100000)
-        // console.log("otpIs :", otp)
-        const user = await User.findByIdAndUpdate(child.id, { $set: { otp } })
+        //To send SMS use child.phone
+        const otp = Math.floor(Math.random() * 100000).toString()
+        const user = await User.findByIdAndUpdate(child.id, {
+          $set: { otp },
+        })
         console.log('OTP sent to the child')
         return user
       } catch (err) {
@@ -200,7 +273,10 @@ const resolvers: IResolvers = {
       info
     ): Promise<UserDocument | null> => {
       try {
-        const parent = await User.findOne({ _id: args.parentId, role: 'parent' })
+        const parent = await User.findOne({
+          _id: args.parentId,
+          role: 'parent' || 'teacher',
+        })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
@@ -208,7 +284,6 @@ const resolvers: IResolvers = {
         const child = await User.findOne({ _id: args.childId, role: 'user' })
         if (child === null)
           throw new Error('Child Does not Exist,Please provide valid childId ')
-        // @ts-ignore
         if (child.otp == args.otp) {
           //updating child in parent schema
           await User.findByIdAndUpdate(parent.id, {
@@ -219,7 +294,7 @@ const resolvers: IResolvers = {
             $addToSet: { parent: parent.id },
           })
           //updating OTP as null
-          await User.findByIdAndUpdate(child.id, { $set: { otp: null } })
+          await User.findByIdAndUpdate(child.id, { $set: { otp: '' } })
           return childAfterUpdate
         } else {
           throw new Error('Incorrect OTP')
@@ -261,6 +336,83 @@ const resolvers: IResolvers = {
       } catch (err) {
         throw err
       }
+    },
+    updateProfile: async (
+      root,
+      args: {
+        id: string
+        firstName: string
+        lastName: string
+        avatar: string
+        qualification: string
+        experience: string
+        subject: string
+        exam: string
+        lang: string
+        facebook_url: string
+        twitter_url: string
+        role: string
+        verified: boolean
+        gender: string
+        info: InfoDocument
+        scope: string
+      },
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      const { userId } = req.session
+      // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz',args.gender);
+      // await gender.validateAsync(args, { abortEarly: false })
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: args },
+        { new: true }
+      ).populate('scope')
+      return user
+    },
+
+    verifyOtp: async (
+      root,
+      args: { phone: string; otp: string },
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument> => {
+      await signInOtp.validateAsync(args, { abortEarly: false })
+      const user = await verifyOtp(args, fields(info))
+
+      req.session.userId = user.id
+      user.sid = req.session.id
+      return user
+    },
+    signOut: async (
+      root,
+      args: { phone: string },
+      { req, res }: { req: Request; res: Response }
+    ): Promise<Boolean> => {
+      return signOut(req, res)
+    },
+    getOtp: async (
+      root,
+      args: { phone: string },
+      { req }: { req: Request }
+    ): Promise<Number> => {
+      const otp = generateOTP()
+      let user = await User.findOne({ phone: args.phone })
+
+      if (!user) {
+        const code = nanoid(5)
+        const u = new User({
+          phone: args.phone,
+          password: otp,
+          referralCode: code,
+        })
+        await u.save()
+      } else {
+        user.password = otp.toString()
+        await user.save()
+      }
+      requestOTP(args.phone, otp)
+      return otp
     },
   },
 }
