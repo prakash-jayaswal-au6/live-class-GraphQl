@@ -1,10 +1,5 @@
 import mongoose from 'mongoose'
-import joi, {
-  ExtensionFactory,
-  Root,
-  StringSchema,
-  ObjectSchema,
-} from '@hapi/joi'
+import joi, { ExtensionFactory, Root, StringSchema, ObjectSchema } from 'joi'
 import { UserInputError } from 'apollo-server-express'
 
 const objectId: ExtensionFactory = (joi) => ({
