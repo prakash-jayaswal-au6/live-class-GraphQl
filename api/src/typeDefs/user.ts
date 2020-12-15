@@ -146,8 +146,18 @@ export default gql`
     _id: String
     firstName: String
     lastName: String
+    name: String
     phone: String
     email: String
+    currentBalance: Int
+    walletId: [ID]
+    referralCode: String
+    referedFrom: ID
+    referedUsers: [ID]
+    products: [ID]
+    otp: String
+    children: [ID]
+    parent: [ID]
     role: String
     gender: String
     dob: String

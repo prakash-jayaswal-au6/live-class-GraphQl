@@ -1,17 +1,19 @@
 query users {
   users {
-    id
-    name
-    role
-    phone
-    currentBalance
-    otp
-    walletId
-    children
-    parent
-    products
-    referralCode
-    referedFrom
-    referedUsers
+    data {
+      id
+      name
+      role
+      phone
+      currentBalance
+      otp
+      walletId
+      children
+      parent
+      products
+      referralCode
+      referedFrom
+      referedUsers
+    }
   }
 }
