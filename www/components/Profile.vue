@@ -17,8 +17,7 @@
             Full name
           </dt>
           <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-            <!-- {{ profile.name }} -->
-            {{ profile.name }}
+            {{ profile.firstName + ' ' + profile.lastName }}
           </dd>
         </div>
         <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -99,7 +98,7 @@ export default {
     }
   },
   async created() {
-    const userId = '5fd601893d802627307082fe'
+    const userId = '5fd8f269fba4e5244cb67cf9'
     await this.myProfile(userId)
   },
   methods: {

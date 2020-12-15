@@ -92,6 +92,26 @@
                   />
                   <span class="ml-2">Parent</span>
                 </label>
+                <label class="inline-flex items-center">
+                  <input
+                    type="radio"
+                    class="form-radio"
+                    name="accountType"
+                    value="teacher"
+                    v-model="user.role"
+                  />
+                  <span class="ml-2">Teacher</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input
+                    type="radio"
+                    class="form-radio"
+                    name="accountType"
+                    value="author"
+                    v-model="user.role"
+                  />
+                  <span class="ml-2">Author</span>
+                </label>
                 <label class="inline-flex items-center ml-6">
                   <input
                     type="radio"
@@ -153,12 +173,12 @@ export default {
   async created() {},
   methods: {
     async registerUser(userData) {
-      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', userData)
       try {
         await this.$apollo.mutate({
           mutation: REGISTER_USER,
           variables: userData
         })
+        this.$toast.success('Success').goAway(2000)
         this.$router.push('/welcome')
       } catch (e) {
         console.log('err', e.errors)

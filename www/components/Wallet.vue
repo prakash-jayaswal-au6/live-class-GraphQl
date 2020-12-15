@@ -114,7 +114,7 @@ export default {
     }
   },
   async created() {
-    const userId = '5fd601893d802627307082fe'
+    const userId = '5fd8f269fba4e5244cb67cf9'
     await this.myTransactions(userId)
   },
   methods: {
@@ -133,7 +133,7 @@ export default {
       }
     },
     async addMoney(amount) {
-      const userId = '5fd601893d802627307082fe'
+      const userId = '5fd8f269fba4e5244cb67cf9'
       // console.log(amount)
       try {
         const data = (

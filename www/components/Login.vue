@@ -164,7 +164,9 @@ export default {
           mutation: VERIFY_OTP,
           variables: userData
         })
+        this.$router.push('/welcome')
       } catch (e) {
+        this.$toast.error(e.toString()).goAway(2000)
       } finally {
       }
     },

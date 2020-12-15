@@ -66,6 +66,8 @@ const resolvers: IResolvers = {
         if (args.phone.length < 10 || args.phone.length > 10) {
           throw new Error('Please enter valid phone number ')
         }
+        const check = await User.findOne({ phone: args.phone })
+        if (check) throw new Error('Phone number already exist, cant register ')
         //first find the refel code user
         const userWhoRefered = await User.findOne({
           referralCode: args.referralCode,
@@ -73,6 +75,7 @@ const resolvers: IResolvers = {
         if (userWhoRefered == null) {
           throw new Error('Referel Code incorrect ')
         }
+
         //If user not exist already then we will createit
         const code = nanoid(5)
         const user = new User({
@@ -94,7 +97,7 @@ const resolvers: IResolvers = {
           userId: userWhoRefered.id,
           amount: 100,
           direction: '+',
-          remark: 'referrel bonus',
+          remark: `referrel bonus of ${user.phone}`,
           referedUser: user.id,
           balance: userWhoRefered.currentBalance + 100,
         })
@@ -156,25 +159,6 @@ const resolvers: IResolvers = {
       }
     },
 
-    addClassToUser: async (
-      root,
-      args,
-      { req }: { req: Request },
-      info
-    ): Promise<UserDocument | null> => {
-      try {
-        const result = await User.findByIdAndUpdate(args.userId, {
-          $addToSet: { onlineClasses: args.classId },
-        })
-        await Product.findByIdAndUpdate(args.classId, {
-          $set: { users: args.userId },
-        })
-        return result
-      } catch (err) {
-        throw err
-      }
-    },
-
     //delete User
     deleteUser: async (
       root,
@@ -203,37 +187,53 @@ const resolvers: IResolvers = {
         const user = await User.findById(args.userId)
         if (user == null) throw new Error('User not exist !')
         const seat = product.seats
-        if (seat > 1) {
+        if (seat >= 1) {
           if (user.currentBalance < product.pricePerHour)
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
           await Product.findByIdAndUpdate(args.productId, {
-            $addToSet: { users: args.userId },
+            $addToSet: { users: user.id },
           })
           //change the seat avail in the class
           await Product.findByIdAndUpdate(args.productId, {
             $set: { seats: seat - 1 },
           })
+          //making trans of book class
+          const wallet = new Wallet({
+            userId: user.id,
+            amount: product.pricePerHour,
+            direction: '-',
+            remark: `booked product id ${product.id}`,
+            balance: user.currentBalance - product.pricePerHour,
+          })
+          const newWallet = await wallet.save()
+          //add transact id in users database
+          await User.findByIdAndUpdate(user.id, {
+            $addToSet: { walletId: newWallet.id },
+          })
+          //get the teacher Data
           const teacher = await User.findById(product.postedBy)
           if (teacher == null) throw new Error('somthing wrong happend')
-          //Student amount will decrease
+          //Student amount get deducted
           await User.findByIdAndUpdate(user.id, {
             $set: {
               currentBalance: user.currentBalance - product.pricePerHour,
             },
           })
-          //teacher amount will increase
+          //teacher account balance amount get credit
           await User.findByIdAndUpdate(teacher.id, {
             $set: {
               currentBalance: teacher.currentBalance + product.pricePerHour,
             },
           })
-          const result = await User.findByIdAndUpdate(args.userId, {
-            $addToSet: { products: args.productId },
+          //adding product in the user database
+          const result = await User.findByIdAndUpdate(user.id, {
+            $addToSet: { products: product.id },
           })
-          return result
+          return user
+        } else {
+          throw new Error('Seats Full... !')
         }
-        return null
       } catch (err) {
         throw err
       }

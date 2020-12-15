@@ -28,7 +28,8 @@
             <a
               href="#"
               class="block mt-1 text-lg font-medium leading-tight text-black hover:underline"
-              >Price ₹{{ p.pricePerHour }} /Hour
+            >
+              ₹{{ p.pricePerHour }} /Hour
             </a>
             <p class="mt-2 text-gray-500">Available Seats {{ p.seats }}</p>
             <div class="flex items-center">
@@ -40,6 +41,14 @@
               <div class="text-sm">
                 <p class="leading-none text-black">Posted-By</p>
                 <p class="leading-none text-black">{{ p.postedBy }}</p>
+              </div>
+              <div class="mx-8">
+                <button
+                  class="inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-green-500 rounded shadow ripple hover:shadow-lg hover:bg-green-600 focus:outline-none"
+                  @click="bookProduct(p.id)"
+                >
+                  Book Class
+                </button>
               </div>
             </div>
           </div>
@@ -111,6 +120,7 @@
 import PRODUCTS from '~/../gql/product/products.gql'
 import PRODUCT from '~/../gql/product/product.gql'
 import SAVE_PRODUCT from '~/../gql/product/saveProduct.gql'
+import BOOK_PRODUCT from '~/../gql/user/bookProduct.gql'
 import { EditIcon, TrashIcon, PlusCircleIcon } from 'vue-feather-icons'
 
 export default {
@@ -159,9 +169,26 @@ export default {
           mutation: SAVE_PRODUCT,
           variables: p
         })
-
         await this.getProducts()
       } catch (e) {
+      } finally {
+      }
+    },
+    async bookProduct(pId) {
+      const book = {}
+      book.productId = pId
+      book.userId = '5fd8f269fba4e5244cb67cf9'
+      console.log(book)
+      try {
+        await this.$apollo.mutate({
+          mutation: BOOK_PRODUCT,
+          variables: book
+        })
+        this.$toast.success('Class Booked').goAway(2000)
+        await this.getProducts()
+      } catch (e) {
+        console.log('err', e.errors)
+        this.$toast.error(e.toString()).goAway(2000)
       } finally {
       }
     }
