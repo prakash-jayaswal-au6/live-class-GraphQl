@@ -9,7 +9,7 @@ export default gql`
 
   extend type Mutation {
     saveUser(
-      id: String!
+      id: String
       firstName: String
       lastName: String
       email: String
@@ -25,12 +25,13 @@ export default gql`
       dob: String
       gender: String
       state: String
-      phone: String
+      phone: String!
       zip: Int
       role: String
       verified: Boolean
       active: Boolean
     ): User
+
     bookProduct(userId: String!, productId: String!): User
 
     requestToChild(parentId: String!, childId: String!): User
@@ -40,7 +41,7 @@ export default gql`
     referrelUser(referralCode: String, phone: String): User
     addClassToUser(userId: String!, classId: String!): User
     # bookClass(userId: String!, classId: String!): User
-    getOtp(phone: String!): String
+    getOtp(phone: String!): Int
     verifyOtp(phone: String!, otp: String!): User
     sendInvitation(emails: String): Boolean
     resendEmail(email: String): String
@@ -66,10 +67,10 @@ export default gql`
     register(
       firstName: String
       lastName: String
+      phone: String!
+      role: String
       email: String
-      password: String!
-      passwordConfirmation: String!
-      referrer: String
+      referralCode: String
     ): User @guest
 
     updateProfile(

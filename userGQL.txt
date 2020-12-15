@@ -1,0 +1,40 @@
+mutation  {
+  saveUser(
+    firstName: "prakash"
+    lastName: "jayaswal"
+    email: "prakash@gmail.com"
+    phone:"8003429557"
+  ) {
+    id 
+    firstName
+    lastName
+    phone
+    email
+    role
+    gender
+    dob
+    avatar
+    provider
+    active
+    verified
+    ratings
+    reviews
+    city
+    qualification
+    experience
+    subject
+    exam
+    lang
+    facebook_url
+    twitter_url
+    meta
+    metaTitle
+    metaDescription
+    metaKeywords
+    createdAt
+    updatedAt
+    sid
+    ref
+	
+  }
+}

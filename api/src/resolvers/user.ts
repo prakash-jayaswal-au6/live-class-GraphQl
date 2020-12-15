@@ -54,6 +54,108 @@ const resolvers: IResolvers = {
     },
   },
   Mutation: {
+    //to save or update user
+    register: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      try {
+        //lets validate the phone number
+        if (args.phone.length < 10 || args.phone.length > 10) {
+          throw new Error('Please enter valid phone number ')
+        }
+        //first find the refel code user
+        const userWhoRefered = await User.findOne({
+          referralCode: args.referralCode,
+        })
+        if (userWhoRefered == null) {
+          throw new Error('Referel Code incorrect ')
+        }
+        //If user not exist already then we will createit
+        const code = nanoid(5)
+        const user = new User({
+          firstName: args.firstName,
+          lastName: args.lastName,
+          role: args.role,
+          phone: args.phone,
+          email: args.email,
+          referralCode: code,
+          referedFrom: userWhoRefered.id,
+        })
+        await user.save()
+        //lets add the new user into userWho refered
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { referedUsers: user.id },
+        })
+        //make wallet for bonus add
+        const wallet = new Wallet({
+          userId: userWhoRefered.id,
+          amount: 100,
+          direction: '+',
+          remark: 'referrel bonus',
+          referedUser: user.id,
+          balance: userWhoRefered.currentBalance + 100,
+        })
+        const newWallet = await wallet.save()
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $addToSet: { walletId: newWallet.id },
+        })
+        // let currentBalance = userWhoRefered.currentBalance
+        await User.findByIdAndUpdate(userWhoRefered.id, {
+          $set: {
+            currentBalance: userWhoRefered.currentBalance + newWallet.amount,
+          },
+        })
+        return user
+      } catch (err) {
+        throw err
+      }
+    },
+
+    getOtp: async (
+      root,
+      args: { phone: string },
+      { req }: { req: Request }
+    ): Promise<Number> => {
+      try {
+        let user = await User.findOne({ phone: args.phone })
+        if (!user) {
+          throw new Error('Not a valid phone number, Register first')
+        }
+        const otp = Math.floor(Math.random() * 100000)
+        await User.findByIdAndUpdate(user.id, {
+          $set: { otp: otp.toString() },
+        })
+        console.log('OTP sent to the child')
+        return otp
+      } catch (err) {
+        throw err
+      }
+    },
+    verifyOtp: async (
+      root,
+      args: { phone: string; otp: string },
+      { req }: { req: Request }
+    ): Promise<UserDocument> => {
+      try {
+        let result = await User.findOne({ phone: args.phone })
+        if (!result) {
+          throw new Error('Not a valid phone number, Register first')
+        }
+        if (result.otp == args.otp) {
+          // console.log(result)
+          await User.findByIdAndUpdate(result.id, { $set: { otp: '' } })
+          return result
+        } else {
+          throw new Error('Incorrect OTP')
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+
     addClassToUser: async (
       root,
       args,
@@ -68,40 +170,6 @@ const resolvers: IResolvers = {
           $set: { users: args.userId },
         })
         return result
-      } catch (err) {
-        throw err
-      }
-    },
-    //to save or update user
-    saveUser: async (
-      root,
-      args,
-      { req }: { req: Request },
-      info
-    ): Promise<UserDocument | null> => {
-      try {
-        //lets validate the phone number
-        if (args.phone.length < 10 || args.phone.length > 10) {
-          throw new Error('Please enter valid phone number ')
-        }
-        const existingUser = await User.findOne({ phone: args.phone })
-        //If user exist already then we will update it
-        if (existingUser) {
-          const result = await User.findByIdAndUpdate(args.id, {
-            $set: { name: args.name, role: args.role, phone: args.phone },
-          })
-          return result
-        } else {
-          const code = nanoid(5)
-          const user = new User({
-            name: args.name,
-            role: args.role,
-            phone: args.phone,
-            referralCode: code,
-          })
-          const result = await user.save()
-          return result
-        }
       } catch (err) {
         throw err
       }
@@ -371,48 +439,12 @@ const resolvers: IResolvers = {
       return user
     },
 
-    verifyOtp: async (
-      root,
-      args: { phone: string; otp: string },
-      { req }: { req: Request },
-      info
-    ): Promise<UserDocument> => {
-      await signInOtp.validateAsync(args, { abortEarly: false })
-      const user = await verifyOtp(args, fields(info))
-
-      req.session.userId = user.id
-      user.sid = req.session.id
-      return user
-    },
     signOut: async (
       root,
       args: { phone: string },
       { req, res }: { req: Request; res: Response }
     ): Promise<Boolean> => {
       return signOut(req, res)
-    },
-    getOtp: async (
-      root,
-      args: { phone: string },
-      { req }: { req: Request }
-    ): Promise<Number> => {
-      const otp = generateOTP()
-      let user = await User.findOne({ phone: args.phone })
-
-      if (!user) {
-        const code = nanoid(5)
-        const u = new User({
-          phone: args.phone,
-          password: otp,
-          referralCode: code,
-        })
-        await u.save()
-      } else {
-        user.password = otp.toString()
-        await user.save()
-      }
-      requestOTP(args.phone, otp)
-      return otp
     },
   },
 }

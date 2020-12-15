@@ -1,0 +1,46 @@
+mutation register(
+  $firstName: String!
+  $lastName: String
+  $phone: String!
+  $role: String
+  $referralCode: String!
+) {
+  register(
+    firstName: $firstName
+    lastName: $lastName
+    phone: $phone
+    role: $role
+    referralCode: $referralCode
+  ) {
+    id
+    firstName
+    lastName
+    phone
+    email
+    role
+    gender
+    dob
+    avatar
+    provider
+    active
+    verified
+    ratings
+    reviews
+    city
+    qualification
+    experience
+    subject
+    exam
+    lang
+    facebook_url
+    twitter_url
+    meta
+    metaTitle
+    metaDescription
+    metaKeywords
+    createdAt
+    updatedAt
+    sid
+    ref
+  }
+}

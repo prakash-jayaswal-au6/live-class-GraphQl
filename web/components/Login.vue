@@ -1,92 +1,178 @@
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
-  >
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <img
-          class="mx-auto h-12 w-auto"
-          src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-          alt="Workflow"
-        />
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign up to your account
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Or
-          <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
-            start your 14-day free trial
-          </a>
-        </p>
-      </div>
-      <form class="mt-8 space-y-6" action="#" method="POST">
-        <input type="hidden" name="remember" value="true" />
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div>
-            <label for="email-address" class="sr-only">Email address</label>
-            <input
-              id="email-address"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Phone Number"
-            />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Referral Code</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Referral Code(Optional)"
-            />
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember_me"
-              name="remember_me"
-              type="checkbox"
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            />
-            <label for="remember_me" class="ml-2 block text-sm text-gray-900">
-              Remember me
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  <!-- component -->
+  <section v-if="user" class="absolute top-0 w-full h-full">
+    <div class="absolute top-0 w-full h-full bg-gray-900"></div>
+    <div class="container h-full px-4 mx-auto">
+      <div class="flex items-center content-center justify-center h-full">
+        <div class="w-full px-4 pt-32 lg:w-4/12">
+          <div
+            class="relative flex flex-col w-full min-w-0 mb-6 break-words bg-gray-300 border-0 rounded-lg shadow-lg"
           >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <!-- Heroicon name: lock-closed -->
-              <svg
-                class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </span>
-            Get OTP
-          </button>
+            <div class="px-6 py-6 mb-0 rounded-t">
+              <div class="mb-3 text-center">
+                <h6 class="font-normal font-bold text-gray-600">Sign in</h6>
+              </div>
+              <hr class="mt-6 border-gray-400 border-b-1" />
+            </div>
+            <div class="flex-auto px-4 py-10 pt-0 lg:px-10">
+              <form>
+                <div class="relative w-full mb-3">
+                  <label
+                    class="block mb-2 text-xs font-bold text-gray-700 uppercase"
+                    for="grid-password"
+                    >Phone No</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full px-3 py-3 text-sm text-gray-700 placeholder-gray-400 bg-white rounded shadow focus:outline-none focus:shadow-outline"
+                    placeholder="Phone"
+                    v-model="user.phone"
+                  />
+                </div>
+                <div v-if="fromClose" class="relative w-full mb-3">
+                  <label
+                    class="block mb-2 text-xs font-bold text-gray-700 uppercase"
+                    for="grid-password"
+                    >Otp</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full px-3 py-3 text-sm text-gray-700 placeholder-gray-400 bg-white rounded shadow focus:outline-none focus:shadow-outline"
+                    placeholder="Otp"
+                    v-model="user.otp"
+                  />
+                </div>
+                <div class="mt-6 text-center">
+                  <button
+                    class="w-full px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase bg-gray-900 rounded shadow outline-none active:bg-gray-700 hover:shadow-lg focus:outline-none"
+                    type="button"
+                    style="transition: all 0.15s ease 0s;"
+                    @click="getOtp(user)"
+                    v-on:click="closeAlert()"
+                  >
+                    Get OTP
+                  </button>
+                  <button
+                    class="w-full px-6 py-3 mb-1 mr-1 text-sm font-bold text-white uppercase bg-gray-900 rounded shadow outline-none active:bg-gray-700 hover:shadow-lg focus:outline-none"
+                    type="button"
+                    style="transition: all 0.15s ease 0s;"
+                    @click="verifyOtp(user)"
+                    v-if="fromClose"
+                  >
+                    Submit OTP
+                  </button>
+                </div>
+                <div>
+                  <nuxt-link
+                    to="register"
+                    class="py-1 text-sm font-semibold text-gray-700"
+                    >Don't have an account</nuxt-link
+                  >
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+    <footer class="absolute bottom-0 w-full pb-6 bg-gray-900">
+      <div class="container px-4 mx-auto">
+        <hr class="mb-6 border-gray-700 border-b-1" />
+        <div
+          class="flex flex-wrap items-center justify-center md:justify-between"
+        >
+          <div class="w-full px-4 md:w-4/12">
+            <div class="py-1 text-sm font-semibold text-white">
+              Made with
+              <a
+                href="https://www.creative-tim.com/learning-lab/tailwind-starter-kit"
+                class="py-1 text-sm font-semibold text-white hover:text-gray-400"
+                target="_blank"
+                >Tailwind Starter Kit
+              </a>
+            </div>
+          </div>
+          <div class="w-full px-4 md:w-8/12">
+            <ul class="flex flex-wrap justify-center list-none md:justify-end">
+              <li>
+                <a
+                  href="https://www.creative-tim.com"
+                  class="block px-3 py-1 text-sm font-semibold text-white hover:text-gray-400"
+                  target="_blank"
+                  >Creative Tim</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.creative-tim.com/presentation"
+                  class="block px-3 py-1 text-sm font-semibold text-white hover:text-gray-400"
+                  target="_blank"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://creative-tim.com/blog"
+                  class="block px-3 py-1 text-sm font-semibold text-white hover:text-gray-400"
+                  target="_blank"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/creativetimofficial/argon-design-system/blob/master/LICENSE.md"
+                  class="block px-3 py-1 text-sm font-semibold text-white hover:text-gray-400"
+                  target="_blank"
+                  >MIT License</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </section>
 </template>
+
+<script>
+import { get } from 'http'
+import GET_OTP from '~/../gql/user/getOtp.gql'
+import VERIFY_OTP from '~/../gql/user/verifyOtp.gql'
+
+export default {
+  data() {
+    return {
+      user: {},
+      fromClose: false
+    }
+  },
+  async created() {},
+  methods: {
+    async getOtp(userData) {
+      try {
+        await this.$apollo.mutate({
+          mutation: GET_OTP,
+          variables: userData
+        })
+      } catch (e) {
+      } finally {
+      }
+    },
+    async verifyOtp(userData) {
+      try {
+        await this.$apollo.mutate({
+          mutation: VERIFY_OTP,
+          variables: userData
+        })
+      } catch (e) {
+      } finally {
+      }
+    },
+    closeAlert: function() {
+      this.fromClose = true
+    }
+  }
+}
+</script>
+
+<style></style>
