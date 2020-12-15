@@ -8,7 +8,7 @@
           >
             Register for a free account
           </div>
-          <div class="px-8 py-4">
+          <form @submit.prevent="registerUser(user)" class="px-8 py-4">
             <div class="flex mb-4">
               <div class="w-1/2 mr-1">
                 <label
@@ -108,7 +108,6 @@
               <button
                 class="px-4 py-2 font-bold text-white uppercase bg-gray-900 rounded-full bg-blue hover:bg-blue-dark"
                 type="submit"
-                @click="registerUser(user)"
               >
                 Sign Up
               </button>
@@ -120,7 +119,7 @@
                 >Already have an account</nuxt-link
               >
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -141,12 +140,20 @@ import REGISTER_USER from '~/../gql/user/register.gql'
 export default {
   data() {
     return {
-      user: {}
+      user: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        referralCode: '',
+        role: ''
+      }
     }
   },
   async created() {},
   methods: {
     async registerUser(userData) {
+      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', userData)
       try {
         await this.$apollo.mutate({
           mutation: REGISTER_USER,
@@ -154,7 +161,7 @@ export default {
         })
         this.$router.push('/welcome')
       } catch (e) {
-        console.log('err', e)
+        console.log('err', e.errors)
         this.$toast.error(e.toString()).goAway(2000)
       } finally {
       }
