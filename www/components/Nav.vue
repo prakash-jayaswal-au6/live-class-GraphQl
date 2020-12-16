@@ -107,7 +107,8 @@ export default {
         { link: '/forms', text: 'Forms' },
         { link: '/profile', text: 'Profile' },
         { link: '/refer', text: 'Refer' },
-        { link: '/wallet', text: 'Wallet' }
+        { link: '/wallet', text: 'Wallet' },
+        { link: '/parentcontrol', text: 'Parent Control' }
       ]
     }
   },

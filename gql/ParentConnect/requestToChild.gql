@@ -1,0 +1,13 @@
+mutation requestToChild($parentId: String!, $phone: String!) {
+  requestToChild(parentId: $parentId, phone: $phone) {
+    id
+    name
+    role
+    phone
+    otp
+    children
+    referralCode
+    createdAt
+    updatedAt
+  }
+}

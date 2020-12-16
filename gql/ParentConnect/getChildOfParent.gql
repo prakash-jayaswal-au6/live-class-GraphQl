@@ -1,0 +1,18 @@
+query getChildOfParent($parentId: String!) {
+  getChildOfParent(parentId: $parentId) {
+    id
+    firstName
+    lastName
+    role
+    phone
+    currentBalance
+    otp
+    walletId
+    children
+    parent
+    products
+    referralCode
+    referedFrom
+    referedUsers
+  }
+}

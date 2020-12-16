@@ -5,6 +5,7 @@ export default gql`
     me: User
     users(page: Int, search: String, limit: Int, sort: String): userRes
     user(id: String!): User
+    getChildOfParent(parentId: String!): [User]!
   }
 
   extend type Mutation {
@@ -34,10 +35,11 @@ export default gql`
 
     bookProduct(userId: String!, productId: String!): User
 
-    requestToChild(parentId: String!, childId: String!): User
-    addChildToParent(parentId: String!, childId: String!, otp: String!): User
-    deleteUser(id: ID!): Boolean
+    requestToChild(parentId: String!, phone: String!): User
+    addChildToParent(parentId: String!, phone: String!, otp: String!): User
     removeChildFromParent(parentId: ID!, childId: ID!): User
+
+    deleteUser(id: ID!): Boolean
     referrelUser(referralCode: String, phone: String): User
     addClassToUser(userId: String!, classId: String!): User
     # bookClass(userId: String!, classId: String!): User

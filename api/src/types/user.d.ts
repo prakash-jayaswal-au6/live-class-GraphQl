@@ -35,6 +35,8 @@ export interface UserDocument extends Document {
   currentBalance: number
   referralCode: string
   otp: string
+  parent: UserDocument['_id']
+  children: UserDocument['_id']
   referedFrom: UserDocument['_id']
   referedUsers: UserDocument['_id']
   onlineClasses: ProductDocument['_id']

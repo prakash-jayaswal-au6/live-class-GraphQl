@@ -1,16 +1,13 @@
-mutation{
-	addChildToParent(
-    parentId:"5fcce4bb3d5c232f8c96eb34",
-    childId:"5fccab9bf090010a48535f5c",
-    otp:"13223"){
+mutation addChildToParent($parentId: String!, $phone: String!, $otp: String!) {
+  addChildToParent(parentId: $parentId, phone: $phone, otp: $otp) {
     id
     name
-  	role
+    role
     phone
+    otp
     children
-    parent
     referralCode
     createdAt
     updatedAt
-  }  
+  }
 }

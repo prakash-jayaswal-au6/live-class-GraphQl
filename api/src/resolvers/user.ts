@@ -52,6 +52,24 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       return User.findById(args.id, fields(info))
     },
+
+    getChildOfParent: async (
+      root,
+      args: { parentId: string },
+      ctx,
+      info
+    ): Promise<UserDocument | null> => {
+      try {
+        const children = await User.find({
+          parent: args.parentId,
+          role: 'user',
+        })
+        //@ts-ignore
+        return children
+      } catch (err) {
+        throw err
+      }
+    },
   },
   Mutation: {
     //to save or update user
@@ -311,17 +329,19 @@ const resolvers: IResolvers = {
         // console.log(args.parentId)
         const parent = await User.findOne({
           _id: args.parentId,
-          role: 'parent' || 'teacher',
+          role: 'parent',
         })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
           )
         // console.log(parent)
-        const child = await User.findOne({ _id: args.childId, role: 'user' })
+        const child = await User.findOne({ phone: args.phone, role: 'user' })
         // console.log('child: ', child)
         if (child === null)
-          throw new Error('Child Does not Exist,Please provide valid childId ')
+          throw new Error(
+            'Child Does not Exist,Please provide valid child PhoneNumber '
+          )
         //To send SMS use child.phone
         const otp = Math.floor(Math.random() * 100000).toString()
         const user = await User.findByIdAndUpdate(child.id, {
@@ -343,15 +363,17 @@ const resolvers: IResolvers = {
       try {
         const parent = await User.findOne({
           _id: args.parentId,
-          role: 'parent' || 'teacher',
+          role: 'parent',
         })
         if (parent === null)
           throw new Error(
             'Parent Does not Exist,Please provide valid parentId '
           )
-        const child = await User.findOne({ _id: args.childId, role: 'user' })
+        const child = await User.findOne({ phone: args.phone, role: 'user' })
         if (child === null)
-          throw new Error('Child Does not Exist,Please provide valid childId ')
+          throw new Error(
+            'Child Does not Exist,Please provide valid phone number '
+          )
         if (child.otp == args.otp) {
           //updating child in parent schema
           await User.findByIdAndUpdate(parent.id, {
