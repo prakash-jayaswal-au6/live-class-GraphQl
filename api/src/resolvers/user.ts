@@ -19,7 +19,7 @@ import {
   resetPasswordSchema,
   forgotPasswordSchema,
 } from '../validation'
-import { verifyOtp, signOut } from '../auth'
+import { verifyOtp, signOut, logIn } from '../auth'
 import { Product, User, Wallet } from '../models'
 import { fields, generateOTP, requestOTP } from '../utils'
 import { nanoid } from 'nanoid'
@@ -32,9 +32,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request },
       info
     ): Promise<UserDocument | null> => {
-      return User.findById(req.session.userId, fields(info))
-        .populate('scope')
-        .exec()
+      return User.findById(req.session.userId, fields(info)).exec()
     },
     users: async (root, args, { req }: { req: Request }, info) => {
       try {
@@ -106,6 +104,7 @@ const resolvers: IResolvers = {
           referedFrom: userWhoRefered.id,
         })
         await user.save()
+        logIn(req, user.id)
         //lets add the new user into userWho refered
         await User.findByIdAndUpdate(userWhoRefered.id, {
           $addToSet: { referedUsers: user.id },
@@ -168,6 +167,7 @@ const resolvers: IResolvers = {
         if (result.otp == args.otp) {
           // console.log(result)
           await User.findByIdAndUpdate(result.id, { $set: { otp: '' } })
+          logIn(req, result.id)
           return result
         } else {
           throw new Error('Incorrect OTP')

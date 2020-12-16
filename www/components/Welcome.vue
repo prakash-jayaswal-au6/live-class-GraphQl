@@ -9,7 +9,8 @@
               <h1
                 class="w-full my-3 text-3xl font-normal leading-loose text-grey-darkest"
               >
-                Welcom to the world to Learn virtual with World's top teacher...
+                Welcome <span v-if="me">{{ me.firstName }}</span> to the world
+                to Learn virtual with World's top teacher...
               </h1>
               <div class="w-full text-center">
                 <form action="#">
@@ -35,3 +36,30 @@
     </div>
   </div>
 </template>
+<script>
+import ME from '~/../gql/user/me.gql'
+export default {
+  data() {
+    return {
+      me: null
+    }
+  },
+  created() {
+    this.getMe()
+  },
+  methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+      } catch (e) {
+      } finally {
+      }
+    }
+  }
+}
+</script>

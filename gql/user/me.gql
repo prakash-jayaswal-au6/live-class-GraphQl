@@ -1,0 +1,40 @@
+query me {
+  me {
+    id
+    firstName
+    lastName
+    email
+    phone
+    role
+    verified
+    active
+    provider
+    active
+    avatar
+    qualification
+    experience
+    subject
+    exam
+    lang
+    gender
+    dob
+    scope {
+      id
+      name
+    }
+    facebook_url
+    twitter_url
+    address {
+      address
+      town
+      city
+      state
+      zip
+    }
+    info {
+      public
+      store
+      storePhotos
+    }
+  }
+}
