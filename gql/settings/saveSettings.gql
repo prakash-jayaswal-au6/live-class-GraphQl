@@ -1,0 +1,13 @@
+mutation {
+  saveSettings(
+    id: "5fdb73330ce8a124ec8d7040"
+    websiteName: "lrnr"
+    joiningBonus: 100
+    referralBonus: 50
+  ) {
+    id
+    websiteName
+    referralBonus
+    joiningBonus
+  }
+}

@@ -100,4 +100,6 @@ export interface SettingsDocument extends Document {
     INSTAMOJO_AUTH_TOKEN: string
   }
   q: string
+  referralBonus: number
+  joiningBonus: number
 }

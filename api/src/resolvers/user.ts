@@ -20,7 +20,7 @@ import {
   forgotPasswordSchema,
 } from '../validation'
 import { verifyOtp, signOut, logIn } from '../auth'
-import { Product, User, Wallet } from '../models'
+import { Product, User, Wallet, Setting } from '../models'
 import { fields, generateOTP, requestOTP } from '../utils'
 import { nanoid } from 'nanoid'
 
@@ -79,6 +79,13 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       try {
         //lets validate the phone number
+        const settingId = '5fdb73330ce8a124ec8d7040'
+        const getSetting = await Setting.findById(settingId)
+        console.log(getSetting)
+        if (getSetting == null) {
+          throw new Error('default setting error')
+        }
+
         if (args.phone.length < 10 || args.phone.length > 10) {
           throw new Error('Please enter valid phone number ')
         }
@@ -101,14 +108,19 @@ const resolvers: IResolvers = {
 
           const wallet = new Wallet({
             userId: user.id,
-            amount: 100,
+            amount: getSetting.joiningBonus,
             direction: '+',
             remark: `Joining Bonus`,
-            balance: user.currentBalance + 100,
+            balance: user.currentBalance + getSetting.joiningBonus,
           })
           const newWallet = await wallet.save()
           await User.findByIdAndUpdate(user.id, {
             $addToSet: { walletId: newWallet.id },
+          })
+          await User.findByIdAndUpdate(user.id, {
+            $set: {
+              currentBalance: newWallet.balance,
+            },
           })
           return user
         }
@@ -136,14 +148,19 @@ const resolvers: IResolvers = {
         logIn(req, user.id)
         const wallet1 = new Wallet({
           userId: user.id,
-          amount: 100,
+          amount: getSetting.joiningBonus,
           direction: '+',
           remark: `Joining Bonus`,
-          balance: user.currentBalance + 100,
+          balance: user.currentBalance + getSetting.joiningBonus,
         })
         const newWallet1 = await wallet1.save()
         await User.findByIdAndUpdate(user.id, {
           $addToSet: { walletId: newWallet1.id },
+        })
+        await User.findByIdAndUpdate(user.id, {
+          $set: {
+            currentBalance: newWallet1.balance,
+          },
         })
         //lets add the new user into userWho refered
         await User.findByIdAndUpdate(userWhoRefered.id, {
@@ -152,11 +169,11 @@ const resolvers: IResolvers = {
         //make wallet for bonus add
         const wallet = new Wallet({
           userId: userWhoRefered.id,
-          amount: 100,
+          amount: getSetting.referralBonus,
           direction: '+',
           remark: `referrel bonus of ${user.phone}`,
           referedUser: user.id,
-          balance: userWhoRefered.currentBalance + 100,
+          balance: userWhoRefered.currentBalance + getSetting.referralBonus,
         })
         const newWallet = await wallet.save()
         await User.findByIdAndUpdate(userWhoRefered.id, {

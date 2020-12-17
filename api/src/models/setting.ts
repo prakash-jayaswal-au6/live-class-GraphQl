@@ -135,6 +135,14 @@ const settingSchema = new Schema(
       INSTAMOJO_API_KEY: String,
       INSTAMOJO_AUTH_TOKEN: String,
     },
+    referralBonus: {
+      type: Number,
+      default: 0,
+    },
+    joiningBonus: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     versionKey: false,

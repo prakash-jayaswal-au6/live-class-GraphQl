@@ -51,7 +51,7 @@ export default gql`
       sms: SmsIp
       email: EmailIp
       review: ReviewSettingIp
-      product:ProductSettingIp
+      product: ProductSettingIp
       login: LoginSettingIp
       GOOGLE_MAPS_API: String
       RAZORPAY_KEY_ID: String
@@ -64,6 +64,8 @@ export default gql`
       instagram: String
       enableTax: Boolean
       locationExpiry: Float
+      referralBonus: Int
+      joiningBonus: Int
     ): Setting @admin
   }
 
@@ -240,5 +242,7 @@ export default gql`
     instagram: String
     enableTax: Boolean
     locationExpiry: Float
+    referralBonus: Int
+    joiningBonus: Int
   }
 `
