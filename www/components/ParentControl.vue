@@ -103,10 +103,12 @@
 import GET_CHILDS from '~/../gql/parentConnect/getChildOfParent.gql'
 import REQUEST_TO_CHILD from '~/../gql/parentConnect/requestToChild.gql'
 import ADD_CHILD_TO_PARENT from '~/../gql/parentConnect/addChildToParent.gql'
+import ME from '~/../gql/user/me.gql'
 
 export default {
   data() {
     return {
+      me: null,
       child: null,
       childs: null,
       user: {},
@@ -114,10 +116,22 @@ export default {
     }
   },
   async created() {
-    const id = '5fd8fe7ae860901c687731eb'
-    await this.getChilds(id)
+    this.getMe()
   },
   methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+        await this.getChilds(this.me.id)
+      } catch (e) {
+      } finally {
+      }
+    },
     async getChilds(parentId) {
       try {
         const result = await this.$apollo.query({
@@ -132,7 +146,7 @@ export default {
       }
     },
     async requestToChild(userData) {
-      userData.parentId = '5fd8fe7ae860901c687731eb'
+      userData.parentId = this.me.id
       // console.log(userData)
       try {
         await this.$apollo.mutate({
@@ -146,7 +160,7 @@ export default {
       }
     },
     async addChildToParent(userData) {
-      userData.parentId = '5fd8fe7ae860901c687731eb'
+      userData.parentId = this.me.id
       console.log(userData)
       try {
         await this.$apollo.mutate({

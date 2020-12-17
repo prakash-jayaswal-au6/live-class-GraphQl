@@ -104,20 +104,34 @@
 </template>
 
 <script>
+import ME from '~/../gql/user/me.gql'
 import MY_TRANSACTIONS from '~/../gql/wallet/userTransaction.gql'
 import ADD_MONEY from '~/../gql/wallet/addMoney.gql'
 export default {
   data() {
     return {
+      me: null,
       transactions: null,
       amount: null
     }
   },
   async created() {
-    const userId = '5fd8f269fba4e5244cb67cf9'
-    await this.myTransactions(userId)
+    this.getMe()
   },
   methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+        await this.myTransactions(this.me.id)
+      } catch (e) {
+      } finally {
+      }
+    },
     async myTransactions(userId) {
       try {
         const transactions = await this.$apollo.query({
@@ -126,14 +140,13 @@ export default {
           fetchPolicy: 'no-cache'
         })
 
-        // console.log(transactions.data.userTransaction)
         this.transactions = transactions.data.userTransaction
       } catch (e) {
       } finally {
       }
     },
     async addMoney(amount) {
-      const userId = '5fd8f269fba4e5244cb67cf9'
+      const userId = this.me.id
       // console.log(amount)
       try {
         const data = (

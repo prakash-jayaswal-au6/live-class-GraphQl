@@ -117,6 +117,7 @@
 </template>
 
 <script>
+import ME from '~/../gql/user/me.gql'
 import PRODUCTS from '~/../gql/product/products.gql'
 import PRODUCT from '~/../gql/product/product.gql'
 import SAVE_PRODUCT from '~/../gql/product/saveProduct.gql'
@@ -127,6 +128,8 @@ export default {
   components: { EditIcon, TrashIcon, PlusCircleIcon },
   data() {
     return {
+      me: null,
+
       products: null,
       product: null,
       amount: null
@@ -134,8 +137,21 @@ export default {
   },
   async created() {
     await this.getProducts()
+    this.getMe()
   },
   methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+      } catch (e) {
+      } finally {
+      }
+    },
     async getProduct(id) {
       try {
         this.product = (
@@ -177,7 +193,7 @@ export default {
     async bookProduct(pId) {
       const book = {}
       book.productId = pId
-      book.userId = '5fd8f269fba4e5244cb67cf9'
+      book.userId = this.me.id
       console.log(book)
       try {
         await this.$apollo.mutate({

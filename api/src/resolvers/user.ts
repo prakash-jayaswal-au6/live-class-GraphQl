@@ -84,12 +84,41 @@ const resolvers: IResolvers = {
         }
         const check = await User.findOne({ phone: args.phone })
         if (check) throw new Error('Phone number already exist, cant register ')
-        //first find the refel code user
+        //if referrel code not provided
+        if (args.referralCode === 'new') {
+          const code = nanoid(5)
+          const user = new User({
+            firstName: args.firstName,
+            lastName: args.lastName,
+            role: args.role,
+            phone: args.phone,
+            email: args.email,
+            referralCode: code,
+          })
+          console.log(user)
+          await user.save()
+          logIn(req, user.id)
+
+          const wallet = new Wallet({
+            userId: user.id,
+            amount: 100,
+            direction: '+',
+            remark: `Joining Bonus`,
+            balance: user.currentBalance + 100,
+          })
+          const newWallet = await wallet.save()
+          await User.findByIdAndUpdate(user.id, {
+            $addToSet: { walletId: newWallet.id },
+          })
+          return user
+        }
+
+        // find the refel code user
         const userWhoRefered = await User.findOne({
           referralCode: args.referralCode,
         })
         if (userWhoRefered == null) {
-          throw new Error('Referel Code incorrect ')
+          throw new Error('Enter Correct RefCode or Keep Blank ')
         }
 
         //If user not exist already then we will createit
@@ -105,6 +134,17 @@ const resolvers: IResolvers = {
         })
         await user.save()
         logIn(req, user.id)
+        const wallet1 = new Wallet({
+          userId: user.id,
+          amount: 100,
+          direction: '+',
+          remark: `Joining Bonus`,
+          balance: user.currentBalance + 100,
+        })
+        const newWallet1 = await wallet1.save()
+        await User.findByIdAndUpdate(user.id, {
+          $addToSet: { walletId: newWallet1.id },
+        })
         //lets add the new user into userWho refered
         await User.findByIdAndUpdate(userWhoRefered.id, {
           $addToSet: { referedUsers: user.id },
@@ -209,46 +249,51 @@ const resolvers: IResolvers = {
           if (user.currentBalance < product.pricePerHour)
             throw new Error('User not have sufficient balance !')
           //Adding user in the class
-          await Product.findByIdAndUpdate(args.productId, {
-            $addToSet: { users: user.id },
-          })
-          //change the seat avail in the class
-          await Product.findByIdAndUpdate(args.productId, {
-            $set: { seats: seat - 1 },
-          })
-          //making trans of book class
-          const wallet = new Wallet({
-            userId: user.id,
-            amount: product.pricePerHour,
-            direction: '-',
-            remark: `booked product id ${product.id}`,
-            balance: user.currentBalance - product.pricePerHour,
-          })
-          const newWallet = await wallet.save()
-          //add transact id in users database
-          await User.findByIdAndUpdate(user.id, {
-            $addToSet: { walletId: newWallet.id },
-          })
-          //get the teacher Data
-          const teacher = await User.findById(product.postedBy)
-          if (teacher == null) throw new Error('somthing wrong happend')
-          //Student amount get deducted
-          await User.findByIdAndUpdate(user.id, {
-            $set: {
-              currentBalance: user.currentBalance - product.pricePerHour,
-            },
-          })
-          //teacher account balance amount get credit
-          await User.findByIdAndUpdate(teacher.id, {
-            $set: {
-              currentBalance: teacher.currentBalance + product.pricePerHour,
-            },
-          })
-          //adding product in the user database
-          const result = await User.findByIdAndUpdate(user.id, {
-            $addToSet: { products: product.id },
-          })
-          return user
+          const alreadyBooked = await Product.find({ users: user.id })
+          if (alreadyBooked == null) {
+            await Product.findByIdAndUpdate(args.productId, {
+              $addToSet: { users: user.id },
+            })
+            //change the seat avail in the class
+            await Product.findByIdAndUpdate(args.productId, {
+              $set: { seats: seat - 1 },
+            })
+            //making trans of book class
+            const wallet = new Wallet({
+              userId: user.id,
+              amount: product.pricePerHour,
+              direction: '-',
+              remark: `booked product id ${product.id}`,
+              balance: user.currentBalance - product.pricePerHour,
+            })
+            const newWallet = await wallet.save()
+            //add transact id in users database
+            await User.findByIdAndUpdate(user.id, {
+              $addToSet: { walletId: newWallet.id },
+            })
+            //get the teacher Data
+            const teacher = await User.findById(product.postedBy)
+            if (teacher == null) throw new Error('somthing wrong happend')
+            //Student amount get deducted
+            await User.findByIdAndUpdate(user.id, {
+              $set: {
+                currentBalance: user.currentBalance - product.pricePerHour,
+              },
+            })
+            //teacher account balance amount get credit
+            await User.findByIdAndUpdate(teacher.id, {
+              $set: {
+                currentBalance: teacher.currentBalance + product.pricePerHour,
+              },
+            })
+            //adding product in the user database
+            const result = await User.findByIdAndUpdate(user.id, {
+              $addToSet: { products: product.id },
+            })
+            return user
+          } else {
+            throw new Error('product already booked by u , can t book again')
+          }
         } else {
           throw new Error('Seats Full... !')
         }
@@ -337,18 +382,24 @@ const resolvers: IResolvers = {
           )
         // console.log(parent)
         const child = await User.findOne({ phone: args.phone, role: 'user' })
+
         // console.log('child: ', child)
         if (child === null)
           throw new Error(
             'Child Does not Exist,Please provide valid child PhoneNumber '
           )
-        //To send SMS use child.phone
-        const otp = Math.floor(Math.random() * 100000).toString()
-        const user = await User.findByIdAndUpdate(child.id, {
-          $set: { otp },
-        })
-        console.log('OTP sent to the child')
-        return user
+        const checkChildPresent = await User.find({ children: child.id })
+        if (checkChildPresent == null) {
+          //To send SMS use child.phone
+          const otp = Math.floor(Math.random() * 100000).toString()
+          const user = await User.findByIdAndUpdate(child.id, {
+            $set: { otp },
+          })
+          console.log('OTP sent to the child')
+          return user
+        } else {
+          throw new Error("child already register ,can't register again")
+        }
       } catch (err) {
         throw err
       }

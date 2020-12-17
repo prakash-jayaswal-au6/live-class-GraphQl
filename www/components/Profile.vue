@@ -90,18 +90,32 @@
 
 <script>
 import MY_PROFILE from '~/../gql/user/user.gql'
+import ME from '~/../gql/user/me.gql'
 
 export default {
   data() {
     return {
+      me: null,
       profile: null
     }
   },
   async created() {
-    const userId = '5fd8f269fba4e5244cb67cf9'
-    await this.myProfile(userId)
+    this.getMe()
   },
   methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+        await this.myProfile(this.me.id)
+      } catch (e) {
+      } finally {
+      }
+    },
     async myProfile(id) {
       try {
         const profile = await this.$apollo.query({

@@ -173,6 +173,7 @@ export default {
   async created() {},
   methods: {
     async registerUser(userData) {
+      if (!userData.referralCode) userData.referralCode = 'new'
       try {
         await this.$apollo.mutate({
           mutation: REGISTER_USER,

@@ -95,9 +95,12 @@
 
 <script>
 import { CodeIcon, UploadCloudIcon } from 'vue-feather-icons'
+import ME from '~/../gql/user/me.gql'
+
 export default {
   data() {
     return {
+      me: null,
       sidebar: false,
       links: [
         { link: '/', text: 'Home' },
@@ -116,7 +119,23 @@ export default {
     CodeIcon,
     UploadCloudIcon
   },
+  async created() {
+    this.getMe()
+  },
   methods: {
+    async getMe() {
+      try {
+        this.me = (
+          await this.$apollo.query({
+            query: ME,
+            fetchPolicy: 'no-cache'
+          })
+        ).data.me
+        await this.getChilds(this.me.id)
+      } catch (e) {
+      } finally {
+      }
+    },
     showSidebar(e) {
       this.sidebar = true
     },
