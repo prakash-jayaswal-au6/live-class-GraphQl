@@ -9,35 +9,34 @@ var schemaOptions = {
   timestamps: true,
 }
 const walletSchema = new Schema(
-{
+  {
     userId: {
-        type: ObjectId,
-        ref: 'User'
-      },
+      type: ObjectId,
+      ref: 'User',
+    },
     amount: {
-        type: Number,
-        required: true
-      },
+      type: Number,
+      required: true,
+    },
     direction: {
-        type: String,
-        required: true
-      },
+      type: String,
+      required: true,
+    },
     remark: {
       type: String,
-      required:true
-      },
+      required: true,
+    },
     referedUser: {
-        type: ObjectId,
-        ref: 'User'
+      type: ObjectId,
+      ref: 'User',
     },
     balance: {
       type: Number,
-      default:0,
-      required: true
-      }
-   },
+      default: 0,
+      required: true,
+    },
+  },
   schemaOptions
 )
 
-
-export const Wallet = mongoose.model<WalletDocument>( 'Wallet', walletSchema )
+export const Wallet = mongoose.model<WalletDocument>('Wallet', walletSchema)

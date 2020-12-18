@@ -6,3 +6,4 @@ data
 prod
 release
 .nuxt
+www/static/sw.js

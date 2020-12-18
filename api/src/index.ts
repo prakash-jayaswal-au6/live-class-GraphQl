@@ -6,12 +6,21 @@ import session from 'express-session'
 import Redis from 'ioredis'
 import http from 'http'
 import { createApp } from './app'
-import { MONGO_URI, MONGO_OPTIONS, REDIS_OPTIONS, APP_PORT } from './config'
+import {
+  MONGO_URI,
+  MONGO_OPTIONS,
+  REDIS_OPTIONS,
+  APP_PORT,
+  SEED_DATABASE,
+} from './config'
+import { seed } from './seed'
 //
 ;(async () => {
   try {
     mongoose.set('useFindAndModify', false)
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
+
+    if (SEED_DATABASE) seed() // Seed database with some sample data if it config says so
 
     const RedisStore = connectRedis(session)
 

@@ -1,0 +1,97 @@
+export default [
+  {
+    title: "India's largest grocery store",
+    alert: 'Online Grocery Shop',
+    keywords: 'online shopping, grocery',
+    description:
+      'We provide the best price and shopping experience anywhere in India. Order from the comfort of your home and we deliver your needs on time.',
+    meta: '<h1><br></h1>',
+    detailMeta: '',
+    homeMeta: '',
+    listingMeta: '',
+    shopEmail: 'support@litekart.in',
+    shopPhone: '',
+    shopAddress: '',
+    country: 'IN',
+    logo: '/images/img/litekart.svg',
+    logoMobile: '',
+    logoDark: '',
+    logoMobileDark: '',
+    favicon: '',
+    demo: true,
+    email: {
+      enabled: false,
+      from: 'no-reply@litekart.in',
+      cc: [''],
+      bcc: [''],
+      printers: [''],
+    },
+    sms: {
+      enabled: true,
+      provider: 'twilio',
+    },
+    userRoles: ['user', 'vendor', 'delivery', 'manager', 'admin'],
+    zips: [],
+    product: {
+      moderate: false,
+    },
+    review: {
+      enabled: true,
+      moderate: false,
+    },
+    pageSize: 40,
+    websiteName: 'Litekart Grocery',
+    closed: false,
+    closedMessage: 'We are closed today in Occasion of Diwali',
+    tax: {
+      cgst: 2,
+      sgst: 2,
+      igst: 0,
+    },
+    minimumOrderValue: 50,
+    currency_code: 'INR',
+    currency_decimals: 2,
+    currency_symbol: '₹',
+    enableTax: false,
+    locationExpiry: 157680000000,
+    paymentStatuses: ['Pending', 'Cancelled', 'Paid'],
+    paymentMethods: ['Stripe', 'PayPal', 'COD', 'Razorpay'],
+    GOOGLE_MAPS_API: '',
+    RAZORPAY_KEY_ID: 'rzp_test_o1gRrVKAzCT2Ke',
+    stripePublishableKey: 'pk_test_96u8xKulOOGOLoyc2Jt167fH00DENCsyyF',
+    returnReasons: [
+      {
+        name: 'Item or part defective',
+        val: 'DEFECTIVE_PRODUCT',
+      },
+      {
+        name: 'Item or part was broken/damaged on arrival',
+        val: 'DAMAGED_PRODUCT',
+      },
+      {
+        name: 'Size fit issue',
+        val: 'SIZE_FIT_ISSUES',
+      },
+      {
+        name: 'Quality issue',
+        val: 'QUALITY_ISSUES',
+      },
+      {
+        name: 'Received a different item',
+        val: 'MISSHIPMENT',
+      },
+      {
+        name: 'Color style issue',
+        val: 'COLOR_STYLE_ISSUES',
+      },
+      {
+        name: 'Item missing',
+        val: 'MISSING_ITEM',
+      },
+      {
+        name: 'Item was dead on arrival',
+        val: 'DEAD_ON_ARRIVAL',
+      },
+    ],
+  },
+]
